@@ -18,6 +18,14 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private GameObject pauseMenu;
     [SerializeField] private GameObject gameOver;
 
+    //Fan
+    public LayerMask bubbleLayer;
+    public LayerMask enemyLayer;
+    private bool fanOn;
+    [SerializeField] private float fanPower;
+    [SerializeField] private float coneAngle;
+    [SerializeField] private float coneRadius;
+
 
     void Start()
     {
@@ -26,15 +34,7 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        if (!paused)
-        {
-            mouseAngle = GetMouseRot();
-            transform.GetChild(0).transform.RotateAround(transform.position, new Vector3(0, 0, 1), mouseAngle - transform.GetChild(0).transform.rotation.eulerAngles.z);
-            if (health <= 0)
-            {
-                GameOver();
-            }
-        }
+        //Pause game
         if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.P))
         {
             if (!paused)
@@ -51,12 +51,54 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        bulletDelay = Mathf.Max(0, bulletDelay - Time.deltaTime);
-        if (Input.GetMouseButtonDown(0) && bulletDelay == 0)
+        if (!paused)
         {
-            bulletDelay = 0.5f;
-            FireBullet();
+            mouseAngle = GetMouseRot();
+            transform.GetChild(0).transform.RotateAround(transform.position, new Vector3(0, 0, 1), mouseAngle - transform.GetChild(0).transform.rotation.eulerAngles.z);
+            if (health <= 0)
+            {
+                GameOver();
+            }
+            
+            //Fire bubble
+            bulletDelay = Mathf.Max(0, bulletDelay - Time.deltaTime);
+            if (Input.GetMouseButtonDown(0) && bulletDelay == 0)
+            {
+                bulletDelay = 0.5f;
+                FireBullet();
+            }
+
+            //Blow fan
+            if (Input.GetMouseButtonDown(1))
+                fanOn = true;
+            if (Input.GetMouseButtonUp(1))
+                fanOn = false;
+
+            transform.GetChild(0).GetChild(0).gameObject.SetActive(fanOn);
+            transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = !fanOn;   
+            if (fanOn)
+            {
+                Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, coneRadius);
+                foreach (Collider2D collider in colliders)
+                {
+                    if (((1 << collider.gameObject.layer) & bubbleLayer) != 0)
+                    {
+                        GameObject obj = collider.gameObject;
+                        Vector2 targetDir = ((Vector2)obj.transform.position - (Vector2)transform.position).normalized;
+                        float angleToTarget = Vector2.Angle(bulletDir.normalized, targetDir);
+                        if (angleToTarget <= coneAngle)
+                        {
+                            float inverseDist = 1.0f/Vector2.Distance(transform.position, obj.transform.position);
+                            float angleStr = Mathf.InverseLerp(coneAngle, 0, angleToTarget);
+                            obj.GetComponent<Rigidbody2D>().AddForce(targetDir * fanPower*inverseDist*angleStr);
+                        }
+                    }
+                }
+            }
         }
+        
+        
+
     }
 
     void FixedUpdate()
