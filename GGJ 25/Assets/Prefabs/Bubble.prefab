@@ -116,7 +116,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rb: {fileID: 6713003735824584967}
-  maxSpeed: 5
+  maxSpeed: 4
 --- !u!58 &5073352107841216309
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -164,7 +164,7 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 0.1
+  m_Mass: 0.2
   m_LinearDrag: 0.1
   m_AngularDrag: 0.05
   m_GravityScale: 0

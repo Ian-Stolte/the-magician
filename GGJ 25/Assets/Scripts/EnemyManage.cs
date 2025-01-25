@@ -32,6 +32,7 @@ public class EnemyManage : MonoBehaviour
         health -= change;
         if(health <= 0)
         {
+            GameObject.Find("Player").GetComponent<PlayerController>().KillEnemy();
             death();
         }
     }

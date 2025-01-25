@@ -29,6 +29,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float coneAngle;
     [SerializeField] private float coneRadius;
 
+    [SerializeField] private GameObject camera;
+
 
     void Start()
     {
@@ -104,9 +106,6 @@ public class PlayerController : MonoBehaviour
                 }
             }
         }
-        
-        
-
     }
 
     void FixedUpdate()
@@ -135,7 +134,7 @@ public class PlayerController : MonoBehaviour
         Vector3 mousePos = Input.mousePosition;
         Rect canvasRect = GameObject.Find("Canvas").GetComponent<RectTransform>().rect;
         Vector3 canvasScale = GameObject.Find("Canvas").GetComponent<RectTransform>().localScale;
-        Camera cam = GameObject.Find("Main Camera").GetComponent<Camera>();
+        Camera cam = camera.GetComponent<Camera>();
         float camWidth = cam.orthographicSize*cam.aspect;
         float camHeight = cam.orthographicSize;
         float playerXPct = ((transform.position.x - cam.transform.position.x) + camWidth) / (camWidth*2);
@@ -151,7 +150,6 @@ public class PlayerController : MonoBehaviour
     {
         //GetComponent<Animator>().Play("Fire");
         GameObject bubble = Instantiate(bubblePrefab, transform.position + bulletDir, Quaternion.identity, GameObject.Find("Bubbles").transform);
-        //bubble.GetComponent<Bubble>().direction = bulletDir;
         bubble.GetComponent<Rigidbody2D>().velocity = bulletDir*bubble.GetComponent<Bubble>().speed;
         bubble.GetComponent<Bubble>().player = this;
     }
@@ -161,6 +159,11 @@ public class PlayerController : MonoBehaviour
         health -= dmg;
         damageFlash.Play("DamageFlash");
         hpBar.GetComponent<Image>().fillAmount = health/maxHealth;
+    }
+
+    public void KillEnemy()
+    {
+        StartCoroutine(camera.GetComponent<CameraShake>().Shake(0.05f, 0.8f));
     }
 
     private void GameOver()
