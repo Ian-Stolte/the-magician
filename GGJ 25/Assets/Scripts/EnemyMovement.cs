@@ -104,13 +104,16 @@ public class EnemyMovement : MonoBehaviour
             }
         }
         Grid gridScript = GameObject.Find("Pathfinding Grid").GetComponent<Grid>();
-        Node playerNode = gridScript.NodeFromWorldPoint(transform.position);
-        foreach (Node n in gridScript.grid)
+        if (gridScript.grid != null)
         {
-            if (n == playerNode)
+            Node playerNode = gridScript.NodeFromWorldPoint(transform.position);
+            foreach (Node n in gridScript.grid)
             {
-                Gizmos.color = Color.cyan;
-                Gizmos.DrawCube(n.position, Vector3.one*(2*gridScript.nodeRadius - 0.1f));
+                if (n == playerNode)
+                {
+                    Gizmos.color = Color.cyan;
+                    Gizmos.DrawCube(n.position, Vector3.one*(2*gridScript.nodeRadius - 0.1f));
+                }
             }
         }
     }
