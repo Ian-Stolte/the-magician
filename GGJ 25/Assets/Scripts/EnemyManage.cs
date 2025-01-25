@@ -9,7 +9,6 @@ public class EnemyManage : MonoBehaviour
     [SerializeField]
     int health;
     Transform bubbleObj;
-
     private bool bubbled;
     private float bubbleTimer;
     [SerializeField] private float bubbleTime;
@@ -67,7 +66,6 @@ public class EnemyManage : MonoBehaviour
     private void death()
     {
         bubbleChange(false);
-        Debug.Log("enemy died");
         Destroy(this.gameObject);
     }
 }

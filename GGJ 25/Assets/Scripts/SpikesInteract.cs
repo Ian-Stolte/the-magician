@@ -10,7 +10,6 @@ public class SpikesInteract : MonoBehaviour
         GameObject body = col.gameObject;
         if(body.CompareTag("Player"))
         {
-            Debug.Log("Player was spiked");
             body.GetComponent<PlayerController>().TakeDamage(5f);
         }
         else if(body.CompareTag("Enemy"))
@@ -19,7 +18,6 @@ public class SpikesInteract : MonoBehaviour
         }
         else if(body.CompareTag("Bubble"))
         {
-            Debug.Log("reached");
             Destroy(body);
         }
     }
