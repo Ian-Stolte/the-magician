@@ -88,8 +88,8 @@ public class PlayerController : MonoBehaviour
         Camera cam = GameObject.Find("Main Camera").GetComponent<Camera>();
         float camWidth = cam.orthographicSize*cam.aspect;
         float camHeight = cam.orthographicSize;
-        float playerXPct = (transform.position.x + camWidth) / (camWidth*2);
-        float playerYpct = (transform.position.y + camHeight) / (camHeight*2);
+        float playerXPct = ((transform.position.x - cam.transform.position.x) + camWidth) / (camWidth*2);
+        float playerYpct = ((transform.position.y - cam.transform.position.y) + camHeight) / (camHeight*2);
         float mouseXChange = mousePos.x - playerXPct*canvasRect.width*canvasScale.x;
         float mouseYChange = mousePos.y - playerYpct*canvasRect.height*canvasScale.y;
         bulletDir = new Vector3(mouseXChange, mouseYChange, 0);
