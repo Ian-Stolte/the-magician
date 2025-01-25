@@ -6,7 +6,7 @@ public class BubbleMovement : MonoBehaviour
 {
     [SerializeField]
     bool bounceMode = false;
-    Vector2 originalPos = this.transform.position;
+    //Vector2 originalPos = this.transform.position;
     void Awake()
     {
         bounceMode = true;
@@ -15,4 +15,5 @@ public class BubbleMovement : MonoBehaviour
     {
         //tween between a slightly elevated y and slightly lowered y to create bouncing effect if bounceMode
     }
+
 }
