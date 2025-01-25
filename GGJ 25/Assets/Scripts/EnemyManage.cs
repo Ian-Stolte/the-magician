@@ -10,10 +10,12 @@ public class EnemyManage : MonoBehaviour
     [SerializeField]
     int health;
     Transform bubbleObj;
+    bool bubbled;
     private void Awake()
     {
         bubbleObj = this.gameObject.transform.GetChild(0);
         bubbleChange(false);
+        bubbled = false;
     }
 
     public void healthUpdate(int change)
@@ -28,9 +30,11 @@ public class EnemyManage : MonoBehaviour
 
     public void bubbleChange(bool check)
     {
-        if(check)
+        if(check && !bubbled)
         {
             bubbleObj.gameObject.SetActive(true);
+            gameObject.GetComponent<EnemyMovement>().mode = "IDLE";
+            bubbled = true;
         }
         else
         {
@@ -41,9 +45,10 @@ public class EnemyManage : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D col)
     {
         GameObject body = col.gameObject;
-        if(body.CompareTag("Bubble"))
+        if(body.CompareTag("Bubble") && !bubbled)
         {
             bubbleChange(true);
+            Destroy(body);
         }
     }
 
