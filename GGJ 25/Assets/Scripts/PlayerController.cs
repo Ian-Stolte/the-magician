@@ -62,7 +62,7 @@ public class PlayerController : MonoBehaviour
             
             //Fire bubble
             bulletDelay = Mathf.Max(0, bulletDelay - Time.deltaTime);
-            if (Input.GetMouseButtonDown(0) && bulletDelay == 0)
+            if (Input.GetKeyDown(KeyCode.Space) && bulletDelay == 0)
             {
                 bulletDelay = 0.5f;
                 FireBullet();

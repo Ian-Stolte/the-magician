@@ -39,7 +39,6 @@ public class EnemyMovement : MonoBehaviour
 
     void Update()
     {
-        Debug.Log(name + ": " + Vector3.Distance(player.position, transform.position));
         if (mode == "MOVE" && Vector3.Distance(player.position, transform.position) < followDist)
         {
             if (Vector3.Distance(player.position, moveTarget) > 0.5f)
