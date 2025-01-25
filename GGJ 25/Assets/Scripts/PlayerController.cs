@@ -81,16 +81,14 @@ public class PlayerController : MonoBehaviour
                 Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, coneRadius);
                 foreach (Collider2D collider in colliders)
                 {
-                    Debug.Log(collider.name);
                     if (((1 << collider.gameObject.layer) & bubbleLayer) != 0)
                     {
-                        
                         GameObject obj = collider.gameObject;
                         Vector2 targetDir = ((Vector2)obj.transform.position - (Vector2)transform.position).normalized;
                         float angleToTarget = Vector2.Angle(bulletDir.normalized, targetDir);
                         if (angleToTarget <= coneAngle)
                         {
-                            float inverseDist = 1.0f/Vector2.Distance(transform.position, obj.transform.position);
+                            float inverseDist = 1.0f/(0.5f + Vector2.Distance(transform.position, obj.transform.position)/2.0f);
                             float angleStr = Mathf.InverseLerp(coneAngle, 0, angleToTarget);
                             if(obj.CompareTag("Enemy"))
                             {

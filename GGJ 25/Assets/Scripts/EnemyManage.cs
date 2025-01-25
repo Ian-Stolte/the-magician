@@ -6,16 +6,26 @@ using UnityEngine.UIElements.Experimental;
 
 public class EnemyManage : MonoBehaviour
 {
-
     [SerializeField]
     int health;
     Transform bubbleObj;
-    bool bubbled;
+
+    private bool bubbled;
+    private float bubbleTimer;
+    [SerializeField] private float bubbleTime;
+ 
+ 
     private void Awake()
     {
-        bubbleObj = this.gameObject.transform.GetChild(0);
-        bubbleChange(false);
-        bubbled = false;
+        bubbleObj = transform.GetChild(0);
+    }
+
+
+    private void Update()
+    {
+        bubbleTimer = Mathf.Max(0, bubbleTimer - Time.deltaTime);
+        if (bubbleTimer == 0 && bubbled)
+            bubbleChange(false);
     }
 
     public void healthUpdate(int change)
@@ -33,13 +43,15 @@ public class EnemyManage : MonoBehaviour
         if(check && !bubbled)
         {
             bubbleObj.gameObject.SetActive(true);
-            gameObject.GetComponent<EnemyMovement>().mode = "IDLE";
-            bubbled = true;
+            GetComponent<EnemyMovement>().mode = "IDLE";
+            bubbleTimer = bubbleTime;
         }
         else
         {
             bubbleObj.gameObject.SetActive(false);
+            GetComponent<EnemyMovement>().mode = "MOVE";
         }
+        bubbled = check;
     }
 
     private void OnCollisionEnter2D(Collision2D col)
@@ -57,8 +69,5 @@ public class EnemyManage : MonoBehaviour
         bubbleChange(false);
         Debug.Log("enemy died");
         Destroy(this.gameObject);
-        
     }
-
-
 }

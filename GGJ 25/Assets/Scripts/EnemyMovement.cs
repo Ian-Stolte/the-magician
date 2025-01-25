@@ -10,8 +10,10 @@ public class EnemyMovement : MonoBehaviour
     private Vector3[] path;
     public bool pathReady;
     int waypointIndex;
+    
     [SerializeField] private float speed;
     [SerializeField] private float turnSpeed;
+    [SerializeField] private float followDist;
 
     private Transform player;
     private Pathfinding pathfinding;
@@ -37,9 +39,10 @@ public class EnemyMovement : MonoBehaviour
 
     void Update()
     {
-        if (mode == "MOVE")
+        Debug.Log(name + ": " + Vector3.Distance(player.position, transform.position));
+        if (mode == "MOVE" && Vector3.Distance(player.position, transform.position) < followDist)
         {
-            if (Vector3.Magnitude(player.position - moveTarget) > 0.5f)
+            if (Vector3.Distance(player.position, moveTarget) > 0.5f)
             {
                 moveTarget = player.position;
                 StartCoroutine(pathfinding.FindPath(transform.position, player.position, false, OnPathFound, false));
