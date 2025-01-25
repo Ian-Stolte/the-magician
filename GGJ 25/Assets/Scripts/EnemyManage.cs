@@ -29,7 +29,6 @@ public class EnemyManage : MonoBehaviour
 
     public void healthUpdate(int change)
     {
-        Debug.Log("health change " + change);
         health -= change;
         if(health <= 0)
         {
