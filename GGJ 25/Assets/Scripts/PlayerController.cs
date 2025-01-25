@@ -81,8 +81,10 @@ public class PlayerController : MonoBehaviour
                 Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, coneRadius);
                 foreach (Collider2D collider in colliders)
                 {
+                    Debug.Log(collider.name);
                     if (((1 << collider.gameObject.layer) & bubbleLayer) != 0)
                     {
+                        
                         GameObject obj = collider.gameObject;
                         Vector2 targetDir = ((Vector2)obj.transform.position - (Vector2)transform.position).normalized;
                         float angleToTarget = Vector2.Angle(bulletDir.normalized, targetDir);
@@ -90,7 +92,12 @@ public class PlayerController : MonoBehaviour
                         {
                             float inverseDist = 1.0f/Vector2.Distance(transform.position, obj.transform.position);
                             float angleStr = Mathf.InverseLerp(coneAngle, 0, angleToTarget);
-                            obj.GetComponent<Rigidbody2D>().AddForce(targetDir * fanPower*inverseDist*angleStr);
+                            if(obj.CompareTag("Enemy"))
+                            {
+                                obj.transform.parent.GetComponent<Rigidbody2D>().AddForce(targetDir * fanPower*inverseDist*angleStr);    
+                            }
+                            else
+                                obj.GetComponent<Rigidbody2D>().AddForce(targetDir * fanPower*inverseDist*angleStr);
                         }
                     }
                 }
