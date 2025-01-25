@@ -2,28 +2,34 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class VoidInteract : MonoBehaviour
+public class SpikesInteract : MonoBehaviour
 {
-    // player health script reference
+    // Start is called before the first frame update
     void Start()
     {
         
     }
 
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
+    
     private void OnCollisionEnter2D(Collision2D col)
     {
-        if(col.collider.CompareTag("Player"))
+        GameObject body = col.gameObject;
+        if(body.CompareTag("Player"))
         {
             Debug.Log("Player fell in void");
             //player health script, kill function
         }
-        else if(col.collider.CompareTag("Enemy"))
+        else if(body.CompareTag("Enemy"))
         {
-            Debug.Log("Enemy fell in void");
+            body.GetComponent<EnemyManage>().healthUpdate(3);
+            Debug.Log("Enemy was spiked");
             //get enemy health component of collider , kill function
             //maybe need to check if enemy is in bubble? and in this case, dont kill them?
         }
     }
-
-
 }
