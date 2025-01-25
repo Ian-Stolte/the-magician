@@ -10,6 +10,11 @@ public class PlayerController : MonoBehaviour
     private Vector3 bulletDir;
     [SerializeField] private GameObject bubblePrefab;
 
+    //Keybinds
+    [SerializeField] private KeyCode dashBind;
+    [SerializeField] private KeyCode shootBind;
+    [SerializeField] private KeyCode fanBind;
+
     public float maxHealth;
     public float health;
     [SerializeField] private GameObject hpBar;
@@ -28,6 +33,14 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float fanPower;
     [SerializeField] private float coneAngle;
     [SerializeField] private float coneRadius;
+
+    //Dash
+    private float dashTimer;
+    [SerializeField] private float dashDelay;
+    [SerializeField] private float dashSpeed;
+    [SerializeField] private float dashDuration;
+    [SerializeField] private Color dashColor;
+    private bool dashing;
 
     [SerializeField] private GameObject camera;
 
@@ -56,7 +69,7 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        if (!paused)
+        if (!paused && !dashing)
         {
             mouseAngle = GetMouseRot();
             transform.GetChild(0).transform.RotateAround(transform.position, new Vector3(0, 0, 1), mouseAngle - transform.GetChild(0).transform.rotation.eulerAngles.z);
@@ -67,16 +80,16 @@ public class PlayerController : MonoBehaviour
             
             //Fire bubble
             bulletDelay = Mathf.Max(0, bulletDelay - Time.deltaTime);
-            if (Input.GetKeyDown(KeyCode.Space) && bulletDelay == 0)
+            if (Input.GetKeyDown(shootBind) && bulletDelay == 0)
             {
                 bulletDelay = 0.5f;
                 FireBullet();
             }
 
             //Blow fan
-            if (Input.GetMouseButtonDown(1))
+            if (Input.GetKeyDown(fanBind))
                 fanOn = true;
-            if (Input.GetMouseButtonUp(1))
+            if (Input.GetKeyUp(fanBind))
                 fanOn = false;
 
             transform.GetChild(0).GetChild(0).gameObject.SetActive(fanOn);
@@ -105,8 +118,47 @@ public class PlayerController : MonoBehaviour
                     }
                 }
             }
+
+            //Dash
+            dashTimer = Mathf.Max(0, dashTimer - Time.deltaTime);
+            if (Input.GetKeyDown(dashBind) && dashTimer == 0)
+            {
+                dashTimer = dashDelay;
+                float dashDist = 6.6f;
+                while (Physics2D.OverlapCircle(transform.position + (bulletDir.normalized*dashDist), 0.1f, LayerMask.GetMask("Obstacle")))
+                {
+                    dashDist -= 0.1f;
+                }
+                StartCoroutine(Dash(dashDist-0.1f));
+            }
         }
     }
+
+    private IEnumerator Dash(float dashDist)
+    {
+        dashing = true;
+        fanOn = false;
+        
+        Vector3 dir = bulletDir;
+        float distTraveled = 0;
+        GetComponent<BoxCollider2D>().enabled = false;
+        GetComponent<SpriteRenderer>().color = dashColor;
+        transform.GetChild(0).gameObject.SetActive(false);
+        for (float i = 0; i < 1; i += 0.01f * (1/dashDuration))
+        {
+            Vector3 change = dashSpeed * 0.01f * (-Mathf.Pow((i-0.25f), 2) + 1) * dir;
+            transform.position += change;
+            distTraveled += Vector3.Magnitude(change);
+            if (distTraveled > dashDist)
+                i = 1.01f; //end for loop
+            yield return new WaitForSeconds(0.01f);
+        }
+        GetComponent<SpriteRenderer>().color = new Color(255, 255, 255);
+        GetComponent<BoxCollider2D>().enabled = true;
+        transform.GetChild(0).gameObject.SetActive(true);
+        dashing = false;
+    }
+
 
     void FixedUpdate()
     {
@@ -121,7 +173,7 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W))
             vert += 1;
 
-        if (!paused)
+        if (!paused && !dashing)
         {
             float moveMag = Mathf.Sqrt(Mathf.Pow(horiz, 2) + Mathf.Pow(vert, 2));
             if (moveMag > 0)
