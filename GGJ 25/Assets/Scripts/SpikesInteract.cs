@@ -10,21 +10,18 @@ public class SpikesInteract : MonoBehaviour
         GameObject body = col.gameObject;
         if(body.CompareTag("Player"))
         {
-            Debug.Log("Player fell in void");
+            Debug.Log("Player was spiked");
+            body.GetComponent<PlayerController>().TakeDamage(5f);
             //player health script, kill function
         }
         else if(body.CompareTag("Enemy"))
         {
             body.GetComponent<EnemyManage>().healthUpdate(3);
         }
-    }
-    private void OnTriggerEnter2D(Collider2D col)
-    {
-        GameObject body = col.gameObject;
-        if(body.CompareTag("Enemy"))
+        else if(body.CompareTag("Bubble"))
         {
-            body.GetComponent<EnemyManage>().healthUpdate(3);
-            
+            Debug.Log("reached");
+            Destroy(body);
         }
     }
 }
