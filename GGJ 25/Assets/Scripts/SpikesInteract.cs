@@ -12,7 +12,6 @@ public class SpikesInteract : MonoBehaviour
         {
             Debug.Log("Player was spiked");
             body.GetComponent<PlayerController>().TakeDamage(5f);
-            //player health script, kill function
         }
         else if(body.CompareTag("Enemy"))
         {
