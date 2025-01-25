@@ -109,7 +109,7 @@ public class PlayerController : MonoBehaviour
     {   
         health -= dmg;
         //GetComponent<Animator>().Play("TakeDamage");
-        GameObject.Find("HP Bar").GetComponent<Image>().fillAmount = health/maxHealth;
+        //GameObject.Find("HP Bar").GetComponent<Image>().fillAmount = health/maxHealth;
     }
 
     private void GameOver()
