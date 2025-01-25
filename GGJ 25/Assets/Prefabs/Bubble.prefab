@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 195285839914135668}
   - component: {fileID: 8884070378528252269}
   - component: {fileID: 6052120222666195997}
+  - component: {fileID: 973506890943928644}
   - component: {fileID: 5073352107841216309}
   - component: {fileID: 6713003735824584967}
   m_Layer: 7
@@ -99,9 +100,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47115ee492e0d43479ceb26dcbbde82e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  direction: {x: 0, y: 0, z: 0}
   speed: 2
+  maxLifetime: 6
   player: {fileID: 0}
+--- !u!114 &973506890943928644
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5075017565277284661}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47a5924cc39590a43bebfbc31649e40f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rb: {fileID: 6713003735824584967}
+  maxSpeed: 5
 --- !u!58 &5073352107841216309
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -149,8 +164,8 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 0.7
-  m_LinearDrag: 0.5
+  m_Mass: 0.1
+  m_LinearDrag: 0.1
   m_AngularDrag: 0.05
   m_GravityScale: 0
   m_Material: {fileID: 0}

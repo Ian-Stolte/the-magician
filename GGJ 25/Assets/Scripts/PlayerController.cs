@@ -151,7 +151,8 @@ public class PlayerController : MonoBehaviour
     {
         //GetComponent<Animator>().Play("Fire");
         GameObject bubble = Instantiate(bubblePrefab, transform.position + bulletDir, Quaternion.identity, GameObject.Find("Bubbles").transform);
-        bubble.GetComponent<Bubble>().direction = bulletDir;
+        //bubble.GetComponent<Bubble>().direction = bulletDir;
+        bubble.GetComponent<Rigidbody2D>().velocity = bulletDir*bubble.GetComponent<Bubble>().speed;
         bubble.GetComponent<Bubble>().player = this;
     }
 

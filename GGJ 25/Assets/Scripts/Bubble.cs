@@ -4,14 +4,23 @@ using UnityEngine;
 
 public class Bubble : MonoBehaviour
 {
-    public Vector3 direction;
     public float speed;
     private float distanceTraveled;
 
-    public PlayerController player;
+    [SerializeField] private float maxLifetime;
+    private float lifetime;
+
+    [HideInInspector] public PlayerController player;
     
 
-    void FixedUpdate()
+    void Update()
+    {
+        lifetime += Time.deltaTime;
+        if (lifetime > maxLifetime)
+            Destroy(gameObject);
+    }
+
+    /*void FixedUpdate()
     {
         if (!player.paused)
         {
@@ -22,5 +31,5 @@ public class Bubble : MonoBehaviour
                 Destroy(gameObject);
             }
         }
-    }
+    }*/
 }
