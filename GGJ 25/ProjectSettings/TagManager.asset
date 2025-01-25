@@ -42,3 +42,6 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Bubble
+    uniqueID: 599907985
+    locked: 0
