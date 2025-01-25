@@ -9,20 +9,20 @@ public class EnemyManage : MonoBehaviour
     [SerializeField]
     int health;
 
-
-    void Start()
-    {
-        
-    }
-
-    void Update()
-    {
-        
-    }
-
     public void healthUpdate(int change)
     {
         Debug.Log("health change " + change);
         health -= change;
+        if(health <= 0)
+        {
+            death();
+        }
+    }
+
+    private void death()
+    {
+        Debug.Log("enemy died");
+        Destroy(this.gameObject);
+        
     }
 }
