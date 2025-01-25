@@ -12,6 +12,9 @@ public class PlayerController : MonoBehaviour
 
     public float maxHealth;
     public float health;
+    [SerializeField] private GameObject hpBar;
+    [SerializeField] private Animator damageFlash;
+
     [SerializeField] private float speed;
     public bool paused;
 
@@ -155,8 +158,8 @@ public class PlayerController : MonoBehaviour
     public void TakeDamage(float dmg)
     {   
         health -= dmg;
-        //GetComponent<Animator>().Play("TakeDamage");
-        //GameObject.Find("HP Bar").GetComponent<Image>().fillAmount = health/maxHealth;
+        damageFlash.Play("DamageFlash");
+        hpBar.GetComponent<Image>().fillAmount = health/maxHealth;
     }
 
     private void GameOver()

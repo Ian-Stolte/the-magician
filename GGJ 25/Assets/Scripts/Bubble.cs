@@ -21,13 +21,6 @@ public class Bubble : MonoBehaviour
             {
                 Destroy(gameObject);
             }
-
-            Collider2D collision = Physics2D.OverlapCircle(transform.position, 0.5f, LayerMask.GetMask("Enemy"));
-            if (collision != null)
-            {
-                Debug.Log("Hit enemy: " + collision.gameObject.name);
-                Destroy(gameObject);
-            }
         }
     }
 }
