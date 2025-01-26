@@ -17803,6 +17803,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 05093e4609b82794d853ee05d2d5c853, type: 2}
   - {fileID: 11400000, guid: a40727310be2e1a4d9a3ca4d293a4765, type: 2}
   - {fileID: 11400000, guid: 57c20d954f8c6e04ca1abc4b1f6f2862, type: 2}
+  spikePct: 0.15
   player: {fileID: 129298451}
 --- !u!156049354 &1412268365
 Grid:

@@ -24,9 +24,10 @@ public class TileGeneration : MonoBehaviour
     [SerializeField]
     private int gridSize;
 
-    [SerializeField]
-    private BoolGroup[] spikeChecks;
-    
+    //Spikes
+    [SerializeField] private BoolGroup[] spikeChecks;
+    [SerializeField] private float spikePct;
+
     [SerializeField] private Transform player;
 
 
@@ -87,17 +88,18 @@ public class TileGeneration : MonoBehaviour
             }
         }
 
-        /*for(int x = 0; x <= gridSize; x++)
+        //get rid of 2x2 squares?
+
+        for(int x = 0; x <= gridSize*2; x++)
         {
-            for(int y = 0; y <= gridSize; y++)
+            for(int y = 0; y <= gridSize*2; y++)
             {
-                Vector3Int tempV3 = new Vector3Int(x, y, 0);
-                OpenSpot(tempV3);
+                OpenSpot(new Vector3Int(x, y, 0));
             }
         }
-        EntranceGenerate();
-        ExitGenerate();*/
+        //generate door
     }
+
 
     private int NumNeighbors(Vector3Int currentPos)
     {
@@ -107,8 +109,7 @@ public class TileGeneration : MonoBehaviour
             if (map.HasTile(new Vector3Int(currentPos.x + dir.x, currentPos.y + dir.y, 0)))
                 neighbors++;
         }
-        /*
-        for (int x = -1; x <= 1; x++)
+        /*for (int x = -1; x <= 1; x++)
         {
             for (int y = -1; y <= 1; y++)
             {
@@ -119,61 +120,52 @@ public class TileGeneration : MonoBehaviour
         return neighbors;
     }
 
+
     private void OpenSpot(Vector3Int v3)
     {
-        //3x3 bool groups, check if have space for 3 spikes, and then spawn all 3 at once
-        bool[] tiles = new bool[9];
-        tiles[0] = map.HasTile(v3);
-        tiles[1] = map.HasTile(new Vector3Int(v3.x+1, v3.y, 0));
-        tiles[2] = map.HasTile(new Vector3Int(v3.x+2, v3.y, 0));
-        tiles[3] = map.HasTile(new Vector3Int(v3.x, v3.y+1, 0));
-        tiles[4] = map.HasTile(new Vector3Int(v3.x+1, v3.y+1, 0));
-        tiles[5] = map.HasTile(new Vector3Int(v3.x+2, v3.y+1, 0));
-        tiles[6] = map.HasTile(new Vector3Int(v3.x, v3.y+2, 0));
-        tiles[7] = map.HasTile(new Vector3Int(v3.x+1, v3.y+2, 0));
-        tiles[8] = map.HasTile(new Vector3Int(v3.x+2, v3.y+2, 0));
-        
-        foreach(BoolGroup boolGroup in spikeChecks)
+        //3x2 bool groups, check if have space for 3 spikes, and then spawn all 3 at once        
+        bool[][] patterns = new bool[4][];
+        CheckArea(new bool[]{false, false, false, true, true, true}, 3, v3);
+        CheckArea(new bool[]{true, true, true, false, false, false}, 3, v3);
+        CheckArea(new bool[]{true, false, true, false, true, false}, 2, v3);
+        CheckArea(new bool[]{false, true, false, true, false, true}, 2, v3);
+    }
+
+    private void CheckArea(bool[] pattern, int cols, Vector3Int v3, int fillDir = 0)
+    {
+        bool match = true;
+        for (int i = 0; i < 6; i++)
         {
-            if(boolGroup.CompareGroup(tiles))
+            if (map.HasTile(new Vector3Int(v3.x + i%cols, v3.y + i/cols, 0)) != pattern[i])
             {
-                GenerateSpike(new Vector3Int(v3.x + boolGroup.spawnPlace.x, v3.y + boolGroup.spawnPlace.y, 0));
+                match = false;
+                break;
+            }
+        }
+        if (match)
+        {
+            if (Random.Range(0f, 1f) < spikePct || fillDir != 0)
+            {
+                for (int i = 0; i < 6; i++)
+                {
+                    if (!pattern[i])
+                    {
+                        GenerateSpike(new Vector3Int(v3.x + i%cols, v3.y + i/cols));
+                    }
+                }
+                Vector3Int offset = (cols == 3) ? new Vector3Int(1, 0, 0) : new Vector3Int(0, 1, 0);
+                if (fillDir == 0 || fillDir == 1)
+                    CheckArea(pattern, cols, v3 + offset, 1);
+                if (fillDir == 0 || fillDir == -1)
+                    CheckArea(pattern, cols, v3 + offset*-1, 1);
             }
         }
     }
 
-    private void EntranceGenerate()
-    {
-        bool spawned = false;
-        //check for all open spot tiles and replace? then delete all unreplaced open spot tiles?
-        //check for spike tile and replace
-        //either way, replace any spike tiles within 3 radius
-
-    }
-    private void ExitGenerate()
-    {
-        bool spawned = false;
-
-    }
-
     public void GenerateSpike(Vector3Int v3)
     {
-        int temp = Random.Range(0, 9);
-        if(temp > 7)
-        {
-            spikeMap.SetTile(v3, spikeTile);
-            generatingSpikes = true;
-        }
-        else if(generatingSpikes && spikesGenerated < 3)
-        {
-            spikeMap.SetTile(v3, spikeTile);
-            spikesGenerated++;
-        }
-        else
-        {
-            generatingSpikes = false;
-            spikesGenerated = 0;
-        }
+        //pass direction and spawn spike in correct orientation
+        spikeMap.SetTile(v3, spikeTile);
     }
 
 }
