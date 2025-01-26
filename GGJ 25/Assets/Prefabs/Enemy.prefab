@@ -332,7 +332,7 @@ MonoBehaviour:
   attackDelay: 3
   attackDist: 5
   attackChargeTime: 1
-  bulletPrefab: {fileID: 0}
+  bulletPrefab: {fileID: 8348187279453292934, guid: 402c4d8c67f36974ba184cbc5c87667a, type: 3}
   lineOfSight: 0
 --- !u!114 &5339049904445440604
 MonoBehaviour:

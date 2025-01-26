@@ -30,6 +30,8 @@ public class TileGeneration : MonoBehaviour
     private List<Vector3Int> emptySpaces = new List<Vector3Int>();
 
     [SerializeField] private GameObject fader;
+    [SerializeField] private GameObject gameOver;
+    [SerializeField] private GameObject pauseMenu;
     
     public float levelNum;
 
@@ -53,6 +55,9 @@ public class TileGeneration : MonoBehaviour
     public void NewGame()
     {
         levelNum = 0;
+        Time.timeScale = 1;
+        player.GetComponent<PlayerController>().health = player.GetComponent<PlayerController>().maxHealth;
+        player.GetComponent<PlayerController>().hpBar.GetComponent<Image>().fillAmount = 1;
         //score = 0;
         StartCoroutine(Generate());
     }
@@ -78,6 +83,8 @@ public class TileGeneration : MonoBehaviour
         foreach (Transform child in enemies)
             Destroy(child.gameObject);
         playerSet = false;
+        gameOver.SetActive(false);
+        pauseMenu.SetActive(false);
 
         map.FloodFill(new Vector3Int(gridSize*2, gridSize*2, 0), ruleTile);
         Vector2Int currentPos = new Vector2Int(gridSize, gridSize);
@@ -187,6 +194,7 @@ public class TileGeneration : MonoBehaviour
             child.GetComponent<EnemyMovement>().mode = "MOVE";
 
         generating = false;
+        player.GetComponent<PlayerController>().paused = false;
     }
 
     private void RemoveEmpty(Vector3Int pos)

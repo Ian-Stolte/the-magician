@@ -25,7 +25,7 @@ public class PlayerController : MonoBehaviour
     //Health
     public float maxHealth;
     public float health;
-    [SerializeField] private GameObject hpBar;
+    public GameObject hpBar;
     [SerializeField] private Animator damageFlash;
 
     //Pause
