@@ -10,7 +10,7 @@ public class SpikesInteract : MonoBehaviour
         GameObject body = col.gameObject;
         if(body.CompareTag("Player"))
         {
-            body.GetComponent<PlayerController>().TakeDamage(5f);
+            body.GetComponent<PlayerController>().TakeDamage(2);
         }
         else if(body.CompareTag("Enemy"))
         {

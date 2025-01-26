@@ -5,25 +5,30 @@ using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
+    [SerializeField] private float speed;
     private float bulletDelay;
     private float mouseAngle;
     private Vector3 bulletDir;
     [SerializeField] private GameObject bubblePrefab;
     [SerializeField] private GameObject dashParticlePrefab;
 
+    //Enemies
+    [SerializeField] private Transform enemies;
+    [SerializeField] private TMPro.TextMeshProUGUI enemyText;
+
     //Keybinds
     [SerializeField] private KeyCode dashBind;
     [SerializeField] private KeyCode shootBind;
     [SerializeField] private KeyCode fanBind;
 
+    //Health
     public float maxHealth;
     public float health;
     [SerializeField] private GameObject hpBar;
     [SerializeField] private Animator damageFlash;
 
-    [SerializeField] private float speed;
+    //Pause
     public bool paused;
-
     [SerializeField] private GameObject pauseMenu;
     [SerializeField] private GameObject gameOver;
 
@@ -54,6 +59,9 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        //Enemy text
+        enemyText.text = "Enemies: <b>" + enemies.childCount;
+
         //Pause game
         if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.P))
         {

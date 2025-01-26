@@ -44,8 +44,8 @@ public class EnemyMovement : MonoBehaviour
         {
             path = newPath;
             pathReady = true;
-            if (path.Length > 0)
-                transform.rotation = RotateToward(path[0], transform.position);
+            //if (path.Length > 0)
+            //    transform.rotation = RotateToward(path[0], transform.position);
             waypointIndex = 0;
         }
     }
@@ -100,9 +100,9 @@ public class EnemyMovement : MonoBehaviour
             }
             else
             {
-                Quaternion rotateDir = RotateToward(path[waypointIndex], transform.position);
-                transform.rotation = Quaternion.Lerp(transform.rotation, rotateDir, Time.deltaTime * turnSpeed * Mathf.Abs(rotateDir.eulerAngles.z - transform.rotation.eulerAngles.z)/90);
-                transform.Translate(Vector3.up * Time.deltaTime * speed);
+                //Quaternion rotateDir = RotateToward(path[waypointIndex], transform.position);
+                //transform.rotation = Quaternion.Lerp(transform.rotation, rotateDir, Time.deltaTime * turnSpeed * Mathf.Abs(rotateDir.eulerAngles.z - transform.rotation.eulerAngles.z)/90);
+                transform.Translate((path[waypointIndex]-transform.position).normalized * Time.deltaTime * speed);
             }
         }
     }
