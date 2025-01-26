@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
     private float mouseAngle;
     private Vector3 bulletDir;
     [SerializeField] private GameObject bubblePrefab;
+    [SerializeField] private GameObject dashParticlePrefab;
 
     //Keybinds
     [SerializeField] private KeyCode dashBind;
@@ -138,7 +139,7 @@ public class PlayerController : MonoBehaviour
     {
         dashing = true;
         fanOn = false;
-        
+        GameObject particles = Instantiate(dashParticlePrefab, transform.position, Quaternion.identity, transform);
         Vector3 dir = bulletDir;
         float distTraveled = 0;
         GetComponent<BoxCollider2D>().enabled = false;
@@ -157,6 +158,8 @@ public class PlayerController : MonoBehaviour
         GetComponent<BoxCollider2D>().enabled = true;
         transform.GetChild(0).gameObject.SetActive(true);
         dashing = false;
+        yield return new WaitForSeconds(3);
+        Destroy(particles);
     }
 
 

@@ -16334,6 +16334,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bubblePrefab: {fileID: 5075017565277284661, guid: fcefacef5c4bc4c4a9a50eabb0fee164, type: 3}
+  dashParticlePrefab: {fileID: 720682378554634992, guid: e17b9fb94e5f4704a824029fc2840e9b, type: 3}
   dashBind: 32
   shootBind: 113
   fanBind: 324
