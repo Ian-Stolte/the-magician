@@ -41,6 +41,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float dashSpeed;
     [SerializeField] private float dashDuration;
     [SerializeField] private Color dashColor;
+    [SerializeField] private Color idleColor;
     private bool dashing;
 
     [SerializeField] private GameObject camera;
@@ -154,7 +155,7 @@ public class PlayerController : MonoBehaviour
                 i = 1.01f; //end for loop
             yield return new WaitForSeconds(0.01f);
         }
-        GetComponent<SpriteRenderer>().color = new Color(255, 255, 255);
+        GetComponent<SpriteRenderer>().color = idleColor;
         GetComponent<BoxCollider2D>().enabled = true;
         transform.GetChild(0).gameObject.SetActive(true);
         dashing = false;
