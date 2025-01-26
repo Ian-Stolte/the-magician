@@ -24,6 +24,11 @@ public class TileGeneration : MonoBehaviour
     [SerializeField]
     private RuleTile ruleTile;
 
+    [SerializeField]
+    private int xScalar;
+
+    [SerializeField]
+    private int yScalar;
 
 
     [SerializeField]
@@ -38,8 +43,8 @@ public class TileGeneration : MonoBehaviour
     {
         map.ClearAllTiles();
         spikeMap.ClearAllTiles();
-        map.FloodFill(new Vector3Int(30, 30, 0), ruleTile);
-        Vector2Int currentPos = new Vector2Int(15, 15);
+        map.FloodFill(new Vector3Int(xScalar*2, yScalar*2, 0), ruleTile);
+        Vector2Int currentPos = new Vector2Int(xScalar, yScalar);
         for(int i = 0; i < 80; i++)
         {
 
@@ -65,9 +70,9 @@ public class TileGeneration : MonoBehaviour
         //     }
         // }
 
-        for(int x = 0; x <= 20; x++)
+        for(int x = 0; x <= xScalar; x++)
         {
-            for(int y = 0; y <= 20; y++)
+            for(int y = 0; y <= yScalar; y++)
             {
                 Vector3Int tempV3 = new Vector3Int(x, y, 0);
                 OpenSpot(tempV3);
