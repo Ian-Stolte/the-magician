@@ -42,13 +42,13 @@ public class TileGeneration : MonoBehaviour
 
     private void Awake()
     {
-        NewGame();
+        StartCoroutine(Generate(true));
     }
 
     private void Update()
     {
         if (enemies.childCount == 0 && !generating)
-            StartCoroutine(Generate());
+            StartCoroutine(Generate(false));
     }
 
     public void NewGame()
@@ -58,22 +58,26 @@ public class TileGeneration : MonoBehaviour
         player.GetComponent<PlayerController>().health = player.GetComponent<PlayerController>().maxHealth;
         player.GetComponent<PlayerController>().hpBar.GetComponent<Image>().fillAmount = 1;
         //score = 0;
-        StartCoroutine(Generate());
+        StartCoroutine(Generate(false));
     }
 
     public void Gen()
     {
-        StartCoroutine(Generate());
+        StartCoroutine(Generate(false));
     }
 
-    public IEnumerator Generate()
+    public IEnumerator Generate(bool firstLevel)
     {
         generating = true;
-        for (float i = 0; i < 1; i += 0.01f)
+        if(!firstLevel)
         {
-            fader.GetComponent<CanvasGroup>().alpha = i;
-            yield return new WaitForSeconds(0.01f);
+            for (float i = 0; i < 1; i += 0.01f)
+            {
+                fader.GetComponent<CanvasGroup>().alpha = i;
+                yield return new WaitForSeconds(0.01f);
+            }
         }
+
         Random.InitState(System.Environment.TickCount);
         map.ClearAllTiles();
         spikeMap.ClearAllTiles();
