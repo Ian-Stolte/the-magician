@@ -82,7 +82,7 @@ public class PlayerController : MonoBehaviour
         if (!paused && !dashing)
         {
             mouseAngle = GetMouseRot();
-            transform.GetChild(0).transform.RotateAround(transform.position, new Vector3(0, 0, 1), mouseAngle - transform.GetChild(0).transform.rotation.eulerAngles.z);
+            transform.GetChild(0).transform.RotateAround(transform.position - new Vector3(0, 0.2f, 0), new Vector3(0, 0, 1), mouseAngle - transform.GetChild(0).transform.rotation.eulerAngles.z);
             if (health <= 0)
             {
                 GameOver();
@@ -213,7 +213,7 @@ public class PlayerController : MonoBehaviour
     public void FireBullet()
     {
         //GetComponent<Animator>().Play("Fire");
-        GameObject bubble = Instantiate(bubblePrefab, transform.position + bulletDir, Quaternion.identity, GameObject.Find("Bubbles").transform);
+        GameObject bubble = Instantiate(bubblePrefab, transform.position + bulletDir * 2, Quaternion.identity, GameObject.Find("Bubbles").transform);
         bubble.GetComponent<Rigidbody2D>().velocity = bulletDir*bubble.GetComponent<Bubble>().speed;
         bubble.GetComponent<Bubble>().player = this;
     }
