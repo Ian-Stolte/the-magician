@@ -13,12 +13,14 @@ public class TileGeneration : MonoBehaviour
 
     [SerializeField] private Vector2Int[] directions = new Vector2Int[4];
     [SerializeField] private RuleTile ruleTile;
+    
+    [SerializeField] private GameObject lightPrefab;
 
     //Spikes
     [SerializeField] private float spikePct;
     [SerializeField] private Tilemap spikeMap;
     [SerializeField] private Tilemap testMap;
-    [SerializeField] private Tile spikeTile;
+    [SerializeField] private Tile[] spikeTiles;
     private bool generatingSpikes;
     private int spikesGenerated;
 
@@ -37,6 +39,7 @@ public class TileGeneration : MonoBehaviour
     [SerializeField] private Transform player;
     private bool playerSet;
     [SerializeField] private Transform enemies;
+    [SerializeField] private Transform lighting;
 
 
 
@@ -84,6 +87,8 @@ public class TileGeneration : MonoBehaviour
         testMap.ClearAllTiles();
         emptySpaces.Clear();
         foreach (Transform child in enemies)
+            Destroy(child.gameObject);
+        foreach (Transform child in lighting)
             Destroy(child.gameObject);
         playerSet = false;
         gameOver.SetActive(false);
@@ -146,10 +151,22 @@ public class TileGeneration : MonoBehaviour
             }
         }
 
-        //Create border
-        for (int x = -10; x < gridSize*2+10; x++)
+        //Spawn lights
+        for(int x = 1; x <= gridSize*2-1; x++)
         {
-            for (int y = -10; y < gridSize*2+10; y++)
+            for(int y = 1; y <= gridSize*2-1; y++)
+            {
+                if (AdjNeighbors(new Vector3Int(x, y, 0), map) < 4 && map.HasTile(new Vector3Int(x, y, 0)))
+                {
+                    Instantiate(lightPrefab, new Vector3(x, y, 0), Quaternion.identity, lighting);
+                }
+            }
+        }
+
+        //Create border
+        for (int x = -15; x < gridSize*2+15; x++)
+        {
+            for (int y = -15; y < gridSize*2+15; y++)
             {
                 if (x < 0 || x > gridSize*2 || y < 0 || y > gridSize*2)
                     map.SetTile(new Vector3Int(x, y, 0), ruleTile);
@@ -198,6 +215,7 @@ public class TileGeneration : MonoBehaviour
 
         generating = false;
         player.GetComponent<PlayerController>().paused = false;
+        Debug.Log(lighting.childCount);
     }
 
     private void RemoveEmpty(Vector3Int pos)
@@ -217,11 +235,6 @@ public class TileGeneration : MonoBehaviour
     private int NumNeighbors(Vector3Int currentPos, Tilemap tilemap)
     {
         int neighbors = 0;
-        /*foreach (Vector2Int dir in directions)
-        {
-            if (tilemap.HasTile(new Vector3Int(currentPos.x + dir.x, currentPos.y + dir.y, 0)))
-                neighbors++;
-        }*/
         for (int x = -1; x <= 1; x++)
         {
             for (int y = -1; y <= 1; y++)
@@ -233,17 +246,28 @@ public class TileGeneration : MonoBehaviour
         return neighbors;
     }
 
+    private int AdjNeighbors(Vector3Int currentPos, Tilemap tilemap)
+    {
+        int neighbors = 0;
+        foreach (Vector2Int dir in directions)
+        {
+            if (tilemap.HasTile(new Vector3Int(currentPos.x + dir.x, currentPos.y + dir.y, 0)))
+                neighbors++;
+        }
+        return neighbors;
+    }
+
 
     private void OpenSpot(Vector3Int v3)
     {
         //3x2 bool groups, check if have space for 3 spikes, and then spawn all 3 at once        
-        CheckArea(new bool[]{false, false, false, true, true, true}, new Vector3Int(0, 2, 0), 3, v3);
-        CheckArea(new bool[]{true, true, true, false, false, false}, new Vector3Int(0, -2, 0), 3, v3);
-        CheckArea(new bool[]{true, false, true, false, true, false}, new Vector3Int(2, 0, 0), 2, v3);
-        CheckArea(new bool[]{false, true, false, true, false, true}, new Vector3Int(-2, 0, 0), 2, v3);
+        CheckArea(new bool[]{false, false, false, true, true, true}, new Vector3Int(0, 2, 0), 3, spikeTiles[0], v3);
+        CheckArea(new bool[]{true, true, true, false, false, false}, new Vector3Int(0, -2, 0), 3, spikeTiles[1], v3);
+        CheckArea(new bool[]{true, false, true, false, true, false}, new Vector3Int(2, 0, 0), 2, spikeTiles[2], v3);
+        CheckArea(new bool[]{false, true, false, true, false, true}, new Vector3Int(-2, 0, 0), 2, spikeTiles[3], v3);
     }
 
-    private void CheckArea(bool[] pattern, Vector3Int direction, int cols, Vector3Int v3, int fillDir = 0)
+    private void CheckArea(bool[] pattern, Vector3Int direction, int cols, Tile spikeTile, Vector3Int v3, int fillDir = 0)
     {
         bool match = true;
         for (int i = 0; i < 6; i++)
@@ -267,21 +291,20 @@ public class TileGeneration : MonoBehaviour
                 {
                     if (!pattern[i])
                     {
-                        GenerateSpike(new Vector3Int(v3.x + i%cols, v3.y + i/cols));
+                        GenerateSpike(new Vector3Int(v3.x + i%cols, v3.y + i/cols), spikeTile);
                     }
                 }
                 Vector3Int offset = (cols == 3) ? new Vector3Int(1, 0, 0) : new Vector3Int(0, 1, 0);
                 if (fillDir == 0 || fillDir == 1)
-                    CheckArea(pattern, direction, cols, v3 + offset, 1);
+                    CheckArea(pattern, direction, cols, spikeTile, v3 + offset, 1);
                 if (fillDir == 0 || fillDir == -1)
-                    CheckArea(pattern, direction, cols, v3 + offset*-1, 1);
+                    CheckArea(pattern, direction, cols, spikeTile, v3 + offset*-1, 1);
             }
         }
     }
 
-    public void GenerateSpike(Vector3Int v3)
+    public void GenerateSpike(Vector3Int v3, Tile spikeTile)
     {
-        //pass direction and spawn spike in correct orientation
         spikeMap.SetTile(v3, spikeTile);
     }
 
