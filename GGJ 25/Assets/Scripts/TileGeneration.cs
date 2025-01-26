@@ -15,7 +15,6 @@ public class TileGeneration : MonoBehaviour
     [SerializeField] private RuleTile ruleTile;
 
     //Spikes
-    [SerializeField] private BoolGroup[] spikeChecks;
     [SerializeField] private float spikePct;
     [SerializeField] private Tilemap spikeMap;
     [SerializeField] private Tilemap testMap;

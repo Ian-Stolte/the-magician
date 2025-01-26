@@ -5,9 +5,9 @@ public class FadeMessage : MonoBehaviour
 {
     [SerializeField]
     private Animation fade;
-    public void nextScene()
+    public void nextScene(string sceneName)
     {
-        SceneManager.LoadScene("Level Scene", LoadSceneMode.Single);
+        SceneManager.LoadScene(sceneName, LoadSceneMode.Single);
     }
 
     public void fadePlay()
