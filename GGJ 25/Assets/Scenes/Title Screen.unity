@@ -813,13 +813,13 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2118759603}
-        m_TargetAssemblyTypeName: UnityEngine.Animation, UnityEngine
-        m_MethodName: set_clip
-        m_Mode: 2
+      - m_Target: {fileID: 2118759601}
+        m_TargetAssemblyTypeName: FadeMessage, Assembly-CSharp
+        m_MethodName: fadePlay
+        m_Mode: 1
         m_Arguments:
-          m_ObjectArgument: {fileID: 7400000, guid: cbeb06a979b6e83459df3dcd3698dd01, type: 2}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.AnimationClip, UnityEngine
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -915,6 +915,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e18241b62ef005f41be2ee3ea4bf30cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  fade: {fileID: 2118759603}
 --- !u!225 &2118759602
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -936,11 +937,11 @@ Animation:
   m_GameObject: {fileID: 2118759599}
   m_Enabled: 1
   serializedVersion: 3
-  m_Animation: {fileID: 0}
+  m_Animation: {fileID: 7400000, guid: cbeb06a979b6e83459df3dcd3698dd01, type: 2}
   m_Animations:
   - {fileID: 7400000, guid: cbeb06a979b6e83459df3dcd3698dd01, type: 2}
   m_WrapMode: 0
-  m_PlayAutomatically: 1
+  m_PlayAutomatically: 0
   m_AnimatePhysics: 0
   m_CullingType: 0
 --- !u!114 &2118759604
