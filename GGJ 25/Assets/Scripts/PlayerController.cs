@@ -40,6 +40,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float fanPower;
     [SerializeField] private float coneAngle;
     [SerializeField] private float coneRadius;
+    [SerializeField] private ParticleSystem fanParticles;
 
     //Dash
     private float dashTimer;
@@ -101,11 +102,17 @@ public class PlayerController : MonoBehaviour
 
             //Blow fan
             if (Input.GetKeyDown(fanBind))
+            {
                 fanOn = true;
+                fanParticles.Play();
+            }
             if (Input.GetKeyUp(fanBind))
+            {
                 fanOn = false;
+                fanParticles.Stop(withChildren: false, ParticleSystemStopBehavior.StopEmitting);
+            }
 
-            transform.GetChild(0).GetChild(0).gameObject.SetActive(fanOn);
+            transform.GetChild(0).GetChild(0).GetChild(0).gameObject.SetActive(fanOn);
             transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = !fanOn;   
             if (fanOn)
             {
@@ -151,6 +158,7 @@ public class PlayerController : MonoBehaviour
     {
         dashing = true;
         fanOn = false;
+        fanParticles.Stop(withChildren: false, ParticleSystemStopBehavior.StopEmitting);
         GameObject particles = Instantiate(dashParticlePrefab, transform.position, Quaternion.identity, transform);
         Vector3 dir = bulletDir;
         float distTraveled = 0;
