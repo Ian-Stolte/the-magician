@@ -12,6 +12,12 @@ public class EnemyManage : MonoBehaviour
     private bool bubbled;
     private float bubbleTimer;
     [SerializeField] private float bubbleTime;
+
+    [SerializeField] private int enemyScore;
+
+    public int killBonus;
+
+    private int bubbleBounceCount;
  
  
     private void Awake()
@@ -24,20 +30,20 @@ public class EnemyManage : MonoBehaviour
     {
         bubbleTimer = Mathf.Max(0, bubbleTimer - Time.deltaTime);
         if (bubbleTimer == 0 && bubbled)
-            bubbleChange(false);
+            BubbleChange(false);
     }
-
     public void healthUpdate(int change)
     {
         health -= change;
         if(health <= 0)
         {
-            GameObject.Find("Player").GetComponent<PlayerController>().KillEnemy();
-            death();
+            PlayerController player = GameObject.Find("Player").GetComponent<PlayerController>();
+            player.KillEnemy();
+            Death();
         }
     }
 
-    public void bubbleChange(bool check)
+    public void BubbleChange(bool check)
     {
         if(check && !bubbled)
         {
@@ -47,6 +53,8 @@ public class EnemyManage : MonoBehaviour
         }
         else
         {
+            enemyScore = bubbleObj.GetComponent<Bounce>().bounceCount;
+            bubbleObj.GetComponent<Bounce>().bounceCount = 0;
             bubbleObj.gameObject.SetActive(false);
             GetComponent<EnemyMovement>().mode = "MOVE";
         }
@@ -58,14 +66,17 @@ public class EnemyManage : MonoBehaviour
         GameObject body = col.gameObject;
         if(body.CompareTag("Bubble") && !bubbled)
         {
-            bubbleChange(true);
+            BubbleChange(true);
             Destroy(body);
         }
     }
 
-    private void death()
+    private void Death()
     {
-        bubbleChange(false);
+        PlayerController player = GameObject.Find("Player").GetComponent<PlayerController>();
+        player.AddScore(enemyScore + killBonus);
+        enemyScore = 0;
+        BubbleChange(false);
         Destroy(this.gameObject);
     }
 }

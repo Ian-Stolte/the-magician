@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class TutorialLoad : MonoBehaviour
@@ -16,8 +17,10 @@ public class TutorialLoad : MonoBehaviour
     private bool check;
     void Awake()
     {
+        StartCoroutine(fader.FadeIn());
         player.SetInvulnerability(true);
         check = false;
+        
     }
     private void Update()
     {
@@ -28,4 +31,5 @@ public class TutorialLoad : MonoBehaviour
         }
 
     }
+
 }

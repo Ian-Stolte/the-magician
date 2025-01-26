@@ -9,8 +9,14 @@ public class Bounce : MonoBehaviour
 
     private Vector2 velo;
     public float maxSpeed;
+
+    public int bounceCount;
     
 
+    void Awake()
+    {
+        bounceCount = 0;
+    }
     void Update()
     {
         bounceTimer = Mathf.Max(0, bounceTimer - Time.deltaTime);
@@ -21,6 +27,7 @@ public class Bounce : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Wall"))
         {
+            bounceCount++;
             Vector2 normal = collision.contacts[0].normal;
 
             if (Mathf.Abs(normal.x) > Mathf.Abs(normal.y))
@@ -35,7 +42,12 @@ public class Bounce : MonoBehaviour
                 if (Vector3.Magnitude(rb.velocity) < maxSpeed)
                     rb.velocity *= 1.5f;
             }
+            
+            
             bounceTimer = 0.5f;
         }
+        print("bouncecount is " + bounceCount);
     }
+
+    
 }

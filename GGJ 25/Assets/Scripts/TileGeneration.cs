@@ -60,8 +60,7 @@ public class TileGeneration : MonoBehaviour
         Time.timeScale = 1;
         player.GetComponent<PlayerController>().health = player.GetComponent<PlayerController>().maxHealth;
         player.GetComponent<PlayerController>().hpBar.GetComponent<Image>().fillAmount = 1;
-        //score = 0;
-        StartCoroutine(Generate(false));
+        StartCoroutine(Generate(true));
     }
 
     public void Gen()
@@ -79,6 +78,7 @@ public class TileGeneration : MonoBehaviour
                 fader.GetComponent<CanvasGroup>().alpha = i;
                 yield return new WaitForSeconds(0.01f);
             }
+            
         }
 
         Random.InitState(System.Environment.TickCount);
@@ -203,7 +203,10 @@ public class TileGeneration : MonoBehaviour
                 RemoveEmpty(randomTile);
             }
         }
-
+        if(firstLevel)
+        {
+            player.GetComponent<PlayerController>().resetScore();
+        }
         for (float i = 1; i >= 0; i -= 0.01f)
         {
             fader.GetComponent<CanvasGroup>().alpha = i;

@@ -100,6 +100,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rb: {fileID: 1260644743958081871}
   maxSpeed: 5
+  bounceCount: 0
 --- !u!58 &627169000089108291
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -348,6 +349,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 3
   bubbleTime: 3
+  enemyScore: 0
+  killBonus: 5
 --- !u!50 &1260644743958081871
 Rigidbody2D:
   serializedVersion: 4
