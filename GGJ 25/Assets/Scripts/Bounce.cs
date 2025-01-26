@@ -27,6 +27,7 @@ public class Bounce : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Wall"))
         {
+            GameObject.Find("Player").GetComponent<PlayerController>().bounceScore++;
             bounceCount++;
             Vector2 normal = collision.contacts[0].normal;
 
@@ -46,8 +47,8 @@ public class Bounce : MonoBehaviour
             
             bounceTimer = 0.5f;
         }
-        print("bouncecount is " + bounceCount);
     }
+
 
     
 }

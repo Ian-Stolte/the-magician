@@ -63,7 +63,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float comboCounter;
     [SerializeField] private GameObject comboPrefab;
     [SerializeField] private Transform comboTextHolder;
+    [SerializeField] private Transform bounceTextHolder;
     [SerializeField] private GameObject multiplierText;
+    public int bounceScore;
 
 
 
@@ -289,6 +291,10 @@ public class PlayerController : MonoBehaviour
     public void AddScore(int enemyScore)
     {
         comboCounter = 3f;
+        if(enemyScore > 5)
+        {
+            showBounce(enemyScore-5);
+        }
         if(multiplierOn)
         {
             scoreMultiplier += 0.5f;
@@ -308,9 +314,16 @@ public class PlayerController : MonoBehaviour
             tempComboDisplay.GetComponent<TextMeshProUGUI>().text = "Triple Kill!";
         else if(scoreMultiplier < 3.0f)
             tempComboDisplay.GetComponent<TextMeshProUGUI>().text = "Quadruple Kill!";
-        StartCoroutine(killComboText(tempComboDisplay));
+        StartCoroutine(killText(tempComboDisplay));
         //create a text object with an autostart animation of fading onto the screen then fading down and destroying self, create with corresponding text to score multiplier
         //update 
+    }
+
+    private void showBounce(int bounceCount)
+    {
+        GameObject tempBounceDisplay = Instantiate(comboPrefab, bounceTextHolder);
+        tempBounceDisplay.GetComponent<TextMeshProUGUI>().text = "Bounce x" + bounceCount;
+        StartCoroutine(killText(tempBounceDisplay));
     }
 
     private void changeMultiplier()
@@ -322,8 +335,9 @@ public class PlayerController : MonoBehaviour
     public void resetScore()
     {
         playerScore = 0;
+        bounceScore = 0;
     }
-    public IEnumerator killComboText(GameObject tempComboText)
+    public IEnumerator killText(GameObject tempComboText)
     {
         for (float i = 3; i > 0; i -= 0.01f)
         {
