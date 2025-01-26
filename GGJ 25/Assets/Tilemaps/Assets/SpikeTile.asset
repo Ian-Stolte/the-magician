@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 13312, guid: 0000000000000000e000000000000000, type: 0}
   m_Name: SpikeTile
   m_EditorClassIdentifier: 
-  m_Sprite: {fileID: 21300000, guid: 566bb0c79a6057a4b882490723b6f08d, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 3254b0debea72564fb530ed39d8cad7e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Transform:
     e00: 1

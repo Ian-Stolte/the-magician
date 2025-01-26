@@ -13,3 +13,4 @@ MonoBehaviour:
   m_Name: LeftSpike
   m_EditorClassIdentifier: 
   boolGroup: 01000100
+  spawnPlace: {x: 1, y: 0}
