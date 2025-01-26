@@ -101,11 +101,18 @@ public class TileGeneration : MonoBehaviour
 
     private void OpenSpot(Vector3Int v3)
     {
-        bool[] tiles = new bool[4];
+        //3x3 bool groups, check if have space for 3 spikes, and then spawn all 3 at once
+        bool[] tiles = new bool[9];
         tiles[0] = map.HasTile(v3);
         tiles[1] = map.HasTile(new Vector3Int(v3.x+1, v3.y, 0));
-        tiles[2] = map.HasTile(new Vector3Int(v3.x, v3.y+1, 0));
-        tiles[3] = map.HasTile(new Vector3Int(v3.x+1, v3.y+1, 0));
+        tiles[2] = map.HasTile(new Vector3Int(v3.x+2, v3.y, 0));
+        tiles[3] = map.HasTile(new Vector3Int(v3.x, v3.y+1, 0));
+        tiles[4] = map.HasTile(new Vector3Int(v3.x+1, v3.y+1, 0));
+        tiles[5] = map.HasTile(new Vector3Int(v3.x+2, v3.y+1, 0));
+        tiles[6] = map.HasTile(new Vector3Int(v3.x, v3.y+2, 0));
+        tiles[7] = map.HasTile(new Vector3Int(v3.x+1, v3.y+2, 0));
+        tiles[8] = map.HasTile(new Vector3Int(v3.x+2, v3.y+2, 0));
+        
         foreach(BoolGroup boolGroup in spikeChecks)
         {
             if(boolGroup.CompareGroup(tiles))
