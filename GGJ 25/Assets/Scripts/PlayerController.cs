@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -48,6 +49,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Color dashColor;
     [SerializeField] private Color idleColor;
     private bool dashing;
+
+    private bool playerInvulnerability;
 
     [SerializeField] private GameObject camera;
 
@@ -220,9 +223,20 @@ public class PlayerController : MonoBehaviour
 
     public void TakeDamage(float dmg)
     {   
-        health -= dmg;
+        hpBar.transform.parent.gameObject.SetActive(true);
+        if(!playerInvulnerability || health >= 3)
+        {
+            health -= dmg;
+            hpBar.GetComponent<Image>().fillAmount = health/maxHealth;
+        }
         damageFlash.Play("DamageFlash");
-        hpBar.GetComponent<Image>().fillAmount = health/maxHealth;
+
+    }
+
+    public void SetInvulnerability(bool invulnerability)
+    {
+        playerInvulnerability = invulnerability;
+        hpBar.transform.parent.gameObject.SetActive(!invulnerability);
     }
 
     public void KillEnemy()
