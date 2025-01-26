@@ -8,6 +8,13 @@ public class TileGeneration : MonoBehaviour
 {
     [SerializeField]
     private Tilemap map;
+
+    [SerializeField]
+    private Tilemap spikeMap;
+    [SerializeField]
+    private Tile spikeTile;
+    private bool generatingSpikes;
+    private int spikesGenerated;
     
     [SerializeField]
     private int tileSize;
@@ -17,11 +24,11 @@ public class TileGeneration : MonoBehaviour
     [SerializeField]
     private RuleTile ruleTile;
 
-    [SerializeField]
-    private TileBase[] spikeCheck;
+
 
     [SerializeField]
-    private Tile spikeTile;
+    private BoolGroup[] spikeChecks;
+    
     void Awake()
     {
         Generate();
@@ -30,8 +37,9 @@ public class TileGeneration : MonoBehaviour
     public void Generate()
     {
         map.ClearAllTiles();
-        map.FloodFill(new Vector3Int(20, 20, 0), ruleTile);
-        Vector2Int currentPos = new Vector2Int(10, 10);
+        spikeMap.ClearAllTiles();
+        map.FloodFill(new Vector3Int(30, 30, 0), ruleTile);
+        Vector2Int currentPos = new Vector2Int(15, 15);
         for(int i = 0; i < 80; i++)
         {
 
@@ -48,25 +56,25 @@ public class TileGeneration : MonoBehaviour
             
         }
 
-        for(int i = -2; i <= 22; i++)
-        {
-            foreach(Vector2Int dir in directions)
-            {
-                map.SetTile(new Vector3Int(i*dir.x, i*dir.y, 0), ruleTile);
-                //creates a plus thing because the walls are all starting from the same origin. 2 of the walls need to start from the opposite corner
-            }
-        }
+        // for(int i = -2; i <= 22; i++)
+        // {
+        //     foreach(Vector2Int dir in directions)
+        //     {
+        //         map.SetTile(new Vector3Int(i*dir.x, i*dir.y, 0), ruleTile);
+        //         //creates a plus thing because the walls are all starting from the same origin. 2 of the walls need to start from the opposite corner
+        //     }
+        // }
+
         for(int x = 0; x <= 20; x++)
         {
             for(int y = 0; y <= 20; y++)
             {
-                if(SpikeSpot(new Vector3Int(x, y, 0)));
-                    {
-                        GenerateSpike(new Vector3Int(x, y, 0));
-                    }
-
+                Vector3Int tempV3 = new Vector3Int(x, y, 0);
+                OpenSpot(tempV3);
             }
         }
+        EntranceGenerate();
+        ExitGenerate();
 
 
 
@@ -91,22 +99,34 @@ public class TileGeneration : MonoBehaviour
     }
 
 
-    private bool SpikeSpot(Vector3Int v3)
+    private void OpenSpot(Vector3Int v3)
     {
-        bool check = false;
         bool[] tiles = new bool[4];
-        for(int i = 0; i > 2; i++)
+        tiles[0] = map.HasTile(v3);
+        tiles[1] = map.HasTile(new Vector3Int(v3.x+1, v3.y, 0));
+        tiles[2] = map.HasTile(new Vector3Int(v3.x, v3.y+1, 0));
+        tiles[3] = map.HasTile(new Vector3Int(v3.x+1, v3.y+1, 0));
+        foreach(BoolGroup boolGroup in spikeChecks)
         {
-            Vector3Int tempv3 = new Vector3Int(v3.x+i, v3.y, 0);
-            tiles[i] = map.HasTile(tempv3);
+            if(boolGroup.CompareGroup(tiles))
+            {
+                GenerateSpike(new Vector3Int(v3.x + boolGroup.spawnPlace.x, v3.y + boolGroup.spawnPlace.y, 0));
+            }
         }
-        for(int i = 0; i > 2; i++)
-        {
-            Vector3Int tempv3 = new Vector3Int(v3.x+1, v3.y+i, 0);
-            tiles[i] = map.HasTile(tempv3);
-        }
-        //if tiles matches a possible shape of bool[] that means we can spawn a spike, then check is true
-        return check;
+    }
+
+    private void EntranceGenerate()
+    {
+        bool spawned = false;
+        //check for all open spot tiles and replace? then delete all unreplaced open spot tiles?
+        //check for spike tile and replace
+        //either way, replace any spike tiles within 3 radius
+
+    }
+    private void ExitGenerate()
+    {
+        bool spawned = false;
+
     }
     public Vector2Int RandomDir()
     {
@@ -115,8 +135,22 @@ public class TileGeneration : MonoBehaviour
 
     public void GenerateSpike(Vector3Int v3)
     {
-        map.SetTile(v3, spikeTile);
-        Debug.Log("SPIKE");
+        int temp = Random.Range(0, 9);
+        if(temp > 7)
+        {
+            spikeMap.SetTile(v3, spikeTile);
+            generatingSpikes = true;
+        }
+        else if(generatingSpikes && spikesGenerated < 3)
+        {
+            spikeMap.SetTile(v3, spikeTile);
+            spikesGenerated++;
+        }
+        else
+        {
+            generatingSpikes = false;
+            spikesGenerated = 0;
+        }
     }
 
 }
