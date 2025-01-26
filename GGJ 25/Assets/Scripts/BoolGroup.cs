@@ -6,13 +6,12 @@ using UnityEngine;
 public class BoolGroup : ScriptableObject
 {
     public bool[] boolGroup;
-
     public Vector2Int spawnPlace;
 
     public bool CompareGroup(bool[] comp)
     {
         bool check = true;
-        for(int i=0;i<4;i++)
+        for(int i = 0; i < 9; i++)
         {
             if(comp[i] != boolGroup[i])
             {
