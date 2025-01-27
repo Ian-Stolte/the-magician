@@ -48103,8 +48103,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Press <color=#8DFF9A><b><size=40>Q</size></b></color> to blow a bubble
-    and trap an enemy!
+  m_text: Press <color=#8DFF9A><b><size=40>Left CLick</size></b></color> to blow
+    a bubble and trap an enemy!
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 952ac51b77178574e83a1bde35258458, type: 2}
   m_sharedMaterial: {fileID: -1857487206352687643, guid: 952ac51b77178574e83a1bde35258458, type: 2}
