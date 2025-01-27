@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
@@ -12,28 +14,30 @@ public class PlayerController : MonoBehaviour
     private Vector3 bulletDir;
     [SerializeField] private GameObject bubblePrefab;
     [SerializeField] private GameObject dashParticlePrefab;
+    [SerializeField] private GameObject camera;
 
-    //Enemies
+    [Header("Enemies")]
     [SerializeField] private Transform enemies;
     [SerializeField] private TMPro.TextMeshProUGUI enemyText;
 
-    //Keybinds
+    [Header("Keybinds")]
     [SerializeField] private KeyCode dashBind;
     [SerializeField] private KeyCode shootBind;
     [SerializeField] private KeyCode fanBind;
 
-    //Health
+    [Header("Health")]
     public float maxHealth;
     public float health;
     public GameObject hpBar;
     [SerializeField] private Animator damageFlash;
+    private bool playerInvulnerability;
 
-    //Pause
+    [Header("Pause")]
     public bool paused;
     [SerializeField] private GameObject pauseMenu;
     [SerializeField] private GameObject gameOver;
 
-    //Fan
+    [Header("Fan")]
     public LayerMask bubbleLayer;
     public LayerMask enemyLayer;
     private bool fanOn;
@@ -42,7 +46,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float coneRadius;
     [SerializeField] private ParticleSystem fanParticles;
 
-    //Dash
+    [Header("Dash")]
     private float dashTimer;
     [SerializeField] private float dashDelay;
     [SerializeField] private float dashSpeed;
@@ -50,21 +54,35 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Color dashColor;
     [SerializeField] private Color idleColor;
     private bool dashing;
+    [Header("Score")]
+    public int playerScore;
+    [SerializeField] private TMPro.TextMeshProUGUI scoreText;
+    [SerializeField] private float scoreMultiplier;
+    [SerializeField] private bool multiplierOn;
 
-    private bool playerInvulnerability;
+    [SerializeField] private float comboCounter;
+    [SerializeField] private GameObject comboPrefab;
+    [SerializeField] private Transform comboTextHolder;
+    [SerializeField] private Transform bounceTextHolder;
+    [SerializeField] private GameObject multiplierText;
+    public int bounceScore;
 
-    [SerializeField] private GameObject camera;
+
 
 
     void Start()
     {
         health = maxHealth;
+        scoreMultiplier = 1f;
     }
 
     void Update()
     {
         //Enemy text
         enemyText.text = "Enemies: <b>" + enemies.childCount;
+
+        //Score text
+        scoreText.text = "Score: <b>" + playerScore;
 
         //Pause game
         if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.P))
@@ -152,6 +170,18 @@ public class PlayerController : MonoBehaviour
                 StartCoroutine(Dash(dashDist-0.1f));
             }
         }
+        comboCounter = Mathf.Max(0, comboCounter - Time.deltaTime);
+        if(comboCounter <= 0f)
+        {
+            scoreMultiplier = 1f;
+            multiplierOn = false;
+            changeMultiplier();
+        }
+        else
+        {
+            multiplierOn = true;
+        }
+
     }
 
     private IEnumerator Dash(float dashDist)
@@ -256,5 +286,64 @@ public class PlayerController : MonoBehaviour
     {
         paused = true;
         gameOver.SetActive(true);
+    }
+
+    public void AddScore(int enemyScore)
+    {
+        comboCounter = 3f;
+        if(enemyScore > 5)
+        {
+            showBounce(enemyScore-5);
+        }
+        if(multiplierOn)
+        {
+            scoreMultiplier += 0.5f;
+            enemyScore = (int)(enemyScore*scoreMultiplier*0.5f);
+            showScore();
+        }
+        changeMultiplier();
+        playerScore += enemyScore;
+    }
+
+    private void showScore()
+    {
+        GameObject tempComboDisplay = Instantiate(comboPrefab, comboTextHolder);
+        if(scoreMultiplier < 2.0f)
+            tempComboDisplay.GetComponent<TextMeshProUGUI>().text = "Double Kill!";
+        else if(scoreMultiplier < 2.5f)
+            tempComboDisplay.GetComponent<TextMeshProUGUI>().text = "Triple Kill!";
+        else if(scoreMultiplier < 3.0f)
+            tempComboDisplay.GetComponent<TextMeshProUGUI>().text = "Quadruple Kill!";
+        StartCoroutine(killText(tempComboDisplay));
+        //create a text object with an autostart animation of fading onto the screen then fading down and destroying self, create with corresponding text to score multiplier
+        //update 
+    }
+
+    private void showBounce(int bounceCount)
+    {
+        GameObject tempBounceDisplay = Instantiate(comboPrefab, bounceTextHolder);
+        tempBounceDisplay.GetComponent<TextMeshProUGUI>().text = "Bounce x" + bounceCount;
+        StartCoroutine(killText(tempBounceDisplay));
+    }
+
+    private void changeMultiplier()
+    {
+        multiplierText.GetComponent<RectTransform>().localScale = new Vector3(scoreMultiplier, scoreMultiplier, 1f);
+        multiplierText.GetComponent<TextMeshProUGUI>().text = scoreMultiplier + "x";
+    }
+
+    public void resetScore()
+    {
+        playerScore = 0;
+        bounceScore = 0;
+    }
+    public IEnumerator killText(GameObject tempComboText)
+    {
+        for (float i = 3; i > 0; i -= 0.01f)
+        {
+            yield return new WaitForSeconds(0.01f);
+        }
+        Destroy(tempComboText);
+
     }
 }

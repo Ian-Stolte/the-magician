@@ -23,4 +23,12 @@ public class FadeMessage : MonoBehaviour
     {
         StartCoroutine(NextScene(sceneName));
     }
+    public IEnumerator FadeIn()
+    {
+        for (float i = 1; i >= 0; i -= 0.01f)
+        {
+            canvasGroup.alpha = i;
+            yield return new WaitForSeconds(0.01f);
+        }
+    }
 }
