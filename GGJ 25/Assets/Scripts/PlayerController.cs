@@ -16,6 +16,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private GameObject dashParticlePrefab;
     [SerializeField] private GameObject camera;
 
+    public AudioManager audioManager;
+
     [Header("Enemies")]
     [SerializeField] private Transform enemies;
     [SerializeField] private TMPro.TextMeshProUGUI enemyText;
@@ -117,6 +119,7 @@ public class PlayerController : MonoBehaviour
             {
                 bulletDelay = 0.5f;
                 FireBullet();
+                audioManager.Play("FireBubble");
             }
 
             //Blow fan
@@ -124,11 +127,13 @@ public class PlayerController : MonoBehaviour
             {
                 fanOn = true;
                 fanParticles.Play();
+                audioManager.Play("Blow");
             }
             if (Input.GetKeyUp(fanBind))
             {
                 fanOn = false;
                 fanParticles.Stop(withChildren: false, ParticleSystemStopBehavior.StopEmitting);
+                audioManager.Stop("Blow");
             }
 
             transform.GetChild(0).GetChild(0).GetChild(0).gameObject.SetActive(fanOn);
@@ -162,6 +167,7 @@ public class PlayerController : MonoBehaviour
             dashTimer = Mathf.Max(0, dashTimer - Time.deltaTime);
             if (Input.GetKeyDown(dashBind) && dashTimer == 0)
             {
+                audioManager.Play("Dash");
                 dashTimer = dashDelay;
                 float dashDist = 6.6f;
                 while (Physics2D.OverlapCircle(transform.position + (bulletDir.normalized*dashDist), 0.1f, LayerMask.GetMask("Obstacle")))
@@ -262,6 +268,7 @@ public class PlayerController : MonoBehaviour
 
     public void TakeDamage(float dmg)
     {   
+        audioManager.Play("PlayerHit");
         hpBar.transform.parent.gameObject.SetActive(true);
         if(!playerInvulnerability || health >= 3)
         {
@@ -297,6 +304,7 @@ public class PlayerController : MonoBehaviour
 
     public void AddScore(int enemyScore)
     {
+        audioManager.Play("Ping");
         comboCounter = 3f;
         if(enemyScore > 5)
         {

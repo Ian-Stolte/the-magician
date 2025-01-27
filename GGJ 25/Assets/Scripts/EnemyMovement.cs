@@ -119,6 +119,8 @@ public class EnemyMovement : MonoBehaviour
 
     private IEnumerator Attack()
     {
+        AudioManager audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
+
         Vector3 bulletDir = Vector3.zero;
         transform.GetChild(1).gameObject.SetActive(true);
         for (float i = 0; i < attackChargeTime; i += 0.01f)
@@ -133,6 +135,7 @@ public class EnemyMovement : MonoBehaviour
             }
             yield return new WaitForSeconds(0.01f);
             GetComponent<SpriteRenderer>().color = Color.Lerp(idleColor, attackColor, i/attackChargeTime);
+
             //Rotate gun
             bulletDir = (player.position - transform.position).normalized;
             float angle = Mathf.Atan2(bulletDir.y, bulletDir.x) * Mathf.Rad2Deg;
@@ -147,6 +150,7 @@ public class EnemyMovement : MonoBehaviour
         attackTimer = attackDelay;
         mode = "MOVE";
         transform.GetChild(1).gameObject.SetActive(false);
+        audioManager.Play("Shoot");
     }
 
 

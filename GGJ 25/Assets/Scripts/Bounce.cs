@@ -28,6 +28,7 @@ public class Bounce : MonoBehaviour
         if (collision.gameObject.CompareTag("Wall"))
         {
             GameObject.Find("Player").GetComponent<PlayerController>().bounceScore++;
+            GameObject.Find("AudioManager").GetComponent<AudioManager>().Play("Bounce");
             bounceCount++;
             Vector2 normal = collision.contacts[0].normal;
 

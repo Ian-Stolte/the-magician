@@ -18,11 +18,14 @@ public class EnemyManage : MonoBehaviour
     public int killBonus;
 
     private int bubbleBounceCount;
+
+    public AudioManager audioManager;
  
  
     private void Awake()
     {
         bubbleObj = transform.GetChild(0);
+        audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
     }
 
 
@@ -47,12 +50,14 @@ public class EnemyManage : MonoBehaviour
     {
         if(check && !bubbled)
         {
+            audioManager.Play("Bubbled");
             bubbleObj.gameObject.SetActive(true);
             GetComponent<EnemyMovement>().mode = "IDLE";
             bubbleTimer = bubbleTime;
         }
         else
         {
+            audioManager.Play("Pop");
             enemyScore = bubbleObj.GetComponent<Bounce>().bounceCount;
             bubbleObj.GetComponent<Bounce>().bounceCount = 0;
             bubbleObj.gameObject.SetActive(false);

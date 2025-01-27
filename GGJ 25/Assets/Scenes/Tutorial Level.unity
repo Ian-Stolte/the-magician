@@ -6692,6 +6692,114 @@ MonoBehaviour:
   - {x: 0.5, y: -0.5, z: 0}
   - {x: 0.5, y: 0.5, z: 0}
   - {x: -0.5, y: 0.5, z: 0}
+--- !u!1 &355438966
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 355438968}
+  - component: {fileID: 355438967}
+  m_Layer: 0
+  m_Name: AudioManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &355438967
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 355438966}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f9e888bf800d404eb52ef5efa5c2be3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  music: []
+  sfx:
+  - name: Blow
+    clip: {fileID: 8300000, guid: acac57d6903ee8c4ab213a327f8e464e, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 1
+    source: {fileID: 0}
+  - name: Bubbled
+    clip: {fileID: 8300000, guid: 46fc566dfd86b8748b66d1d96e2d3a71, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: FireBubble
+    clip: {fileID: 8300000, guid: 151b35b38e2febf40bbdc950849a033d, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: Shoot
+    clip: {fileID: 8300000, guid: 2da5c3e2eb74a2f489503d2daf8ce7e7, type: 3}
+    volume: 0.4
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: Dash
+    clip: {fileID: 8300000, guid: 376868d3e5aae394d92af1abb75316bc, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: Pop
+    clip: {fileID: 8300000, guid: 9e12d0d2d1e7c51469b2a8d09c14f4a6, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: PlayerHit
+    clip: {fileID: 8300000, guid: e7ec439e3d7126c41b7e3a628a1302bf, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: Ping
+    clip: {fileID: 8300000, guid: d90c38b424a3b3443b112824e7975c4e, type: 3}
+    volume: 0.6
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: Bounce
+    clip: {fileID: 8300000, guid: 4babe7615dce2ab4486d7141b9c4ca61, type: 3}
+    volume: 0.4
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  audios: []
+  currentSong:
+    name: 
+    clip: {fileID: 0}
+    volume: 0
+    pitch: 0
+    loop: 0
+    source: {fileID: 0}
+--- !u!4 &355438968
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 355438966}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 2.214733, y: -1.8968711, z: 134.26167}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &387235890
 GameObject:
   m_ObjectHideFlags: 0
@@ -49470,6 +49578,7 @@ MonoBehaviour:
   bubblePrefab: {fileID: 5075017565277284661, guid: fcefacef5c4bc4c4a9a50eabb0fee164, type: 3}
   dashParticlePrefab: {fileID: 720682378554634992, guid: e17b9fb94e5f4704a824029fc2840e9b, type: 3}
   camera: {fileID: 538642907}
+  audioManager: {fileID: 355438967}
   enemies: {fileID: 302425958}
   enemyText: {fileID: 482791869}
   dashBind: 32
@@ -49839,3 +49948,4 @@ SceneRoots:
   - {fileID: 771076160}
   - {fileID: 151498097}
   - {fileID: 1457859126}
+  - {fileID: 355438968}
