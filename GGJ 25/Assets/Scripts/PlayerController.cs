@@ -56,6 +56,7 @@ public class PlayerController : MonoBehaviour
     private bool dashing;
     [Header("Score")]
     public int playerScore;
+    public int highScore;
     [SerializeField] private TMPro.TextMeshProUGUI scoreText;
     [SerializeField] private float scoreMultiplier;
     [SerializeField] private bool multiplierOn;
@@ -286,6 +287,12 @@ public class PlayerController : MonoBehaviour
     {
         paused = true;
         gameOver.SetActive(true);
+        gameOver.transform.GetChild(2).GetComponent<TMPro.TextMeshProUGUI>().text = "Score:  <b>" + playerScore;
+        gameOver.transform.GetChild(3).gameObject.SetActive(playerScore > highScore);
+        if (playerScore > highScore)
+        {
+            highScore = playerScore;
+        }
     }
 
     public void AddScore(int enemyScore)
