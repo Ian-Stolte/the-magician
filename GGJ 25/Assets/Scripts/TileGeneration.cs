@@ -35,6 +35,7 @@ public class TileGeneration : MonoBehaviour
     [SerializeField] private GameObject pauseMenu;
     
     public float levelNum;
+    [SerializeField] private GameObject levelText;
 
     [SerializeField] private Transform player;
     private bool playerSet;
@@ -56,8 +57,9 @@ public class TileGeneration : MonoBehaviour
 
     public void NewGame()
     {
-        levelNum = 0;
         Time.timeScale = 1;
+        levelNum = 0;
+        levelText.GetComponent<TMPro.TextMeshProUGUI>().text = "Level:  <b>" + levelNum;
         player.GetComponent<PlayerController>().health = player.GetComponent<PlayerController>().maxHealth;
         player.GetComponent<PlayerController>().hpBar.GetComponent<Image>().fillAmount = 1;
         StartCoroutine(Generate(true));
@@ -93,6 +95,8 @@ public class TileGeneration : MonoBehaviour
         playerSet = false;
         gameOver.SetActive(false);
         pauseMenu.SetActive(false);
+        levelNum++;
+        levelText.GetComponent<TMPro.TextMeshProUGUI>().text = "Level:  <b>" + levelNum;
 
         map.FloodFill(new Vector3Int(gridSize*2, gridSize*2, 0), ruleTile);
         Vector2Int currentPos = new Vector2Int(gridSize, gridSize);
@@ -215,10 +219,9 @@ public class TileGeneration : MonoBehaviour
 
         foreach (Transform child in enemies)
             child.GetComponent<EnemyMovement>().mode = "MOVE";
-
+        
         generating = false;
         player.GetComponent<PlayerController>().paused = false;
-        Debug.Log(lighting.childCount);
     }
 
     private void RemoveEmpty(Vector3Int pos)

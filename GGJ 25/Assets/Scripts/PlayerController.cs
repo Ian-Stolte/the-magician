@@ -16,8 +16,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private GameObject dashParticlePrefab;
     [SerializeField] private GameObject camera;
 
-    public AudioManager audioManager;
-
     [Header("Enemies")]
     [SerializeField] private Transform enemies;
     [SerializeField] private TMPro.TextMeshProUGUI enemyText;
@@ -82,10 +80,10 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         //Enemy text
-        enemyText.text = "Enemies: <b>" + enemies.childCount;
+        enemyText.text = "Enemies:  <b>" + enemies.childCount;
 
         //Score text
-        scoreText.text = "Score: <b>" + playerScore;
+        scoreText.text = "Score:  <b>" + playerScore;
 
         //Pause game
         if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.P))
@@ -119,7 +117,7 @@ public class PlayerController : MonoBehaviour
             {
                 bulletDelay = 0.5f;
                 FireBullet();
-                audioManager.Play("FireBubble");
+                GameObject.Find("AudioManager").GetComponent<AudioManager>().Play("FireBubble");
             }
 
             //Blow fan
@@ -127,47 +125,23 @@ public class PlayerController : MonoBehaviour
             {
                 fanOn = true;
                 fanParticles.Play();
-                audioManager.Play("Blow");
+                GameObject.Find("AudioManager").GetComponent<AudioManager>().Play("Blow");
             }
             if (Input.GetKeyUp(fanBind))
             {
                 fanOn = false;
                 fanParticles.Stop(withChildren: false, ParticleSystemStopBehavior.StopEmitting);
-                audioManager.Stop("Blow");
+                GameObject.Find("AudioManager").GetComponent<AudioManager>().Stop("Blow");
             }
 
             transform.GetChild(0).GetChild(0).GetChild(0).gameObject.SetActive(fanOn);
             transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = !fanOn;   
-            if (fanOn)
-            {
-                Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, coneRadius);
-                foreach (Collider2D collider in colliders)
-                {
-                    if (((1 << collider.gameObject.layer) & bubbleLayer) != 0)
-                    {
-                        GameObject obj = collider.gameObject;
-                        Vector2 targetDir = ((Vector2)obj.transform.position - (Vector2)transform.position).normalized;
-                        float angleToTarget = Vector2.Angle(bulletDir.normalized, targetDir);
-                        if (angleToTarget <= coneAngle)
-                        {
-                            float inverseDist = 1.0f/(0.5f + Vector2.Distance(transform.position, obj.transform.position)/2.0f);
-                            float angleStr = Mathf.InverseLerp(coneAngle, 0, angleToTarget);
-                            if(obj.CompareTag("Enemy"))
-                            {
-                                obj.transform.parent.GetComponent<Rigidbody2D>().AddForce(targetDir * fanPower*inverseDist*angleStr);    
-                            }
-                            else
-                                obj.GetComponent<Rigidbody2D>().AddForce(targetDir * fanPower*inverseDist*angleStr);
-                        }
-                    }
-                }
-            }
 
             //Dash
             dashTimer = Mathf.Max(0, dashTimer - Time.deltaTime);
             if (Input.GetKeyDown(dashBind) && dashTimer == 0)
             {
-                audioManager.Play("Dash");
+                GameObject.Find("AudioManager").GetComponent<AudioManager>().Play("Dash");
                 dashTimer = dashDelay;
                 float dashDist = 6.6f;
                 while (Physics2D.OverlapCircle(transform.position + (bulletDir.normalized*dashDist), 0.1f, LayerMask.GetMask("Obstacle")))
@@ -239,6 +213,31 @@ public class PlayerController : MonoBehaviour
             if (moveMag > 0)
                 transform.position += new Vector3(horiz*speed*0.02f/moveMag, vert*speed*0.02f/moveMag, 0);
         }
+
+        if (fanOn)
+        {
+            Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, coneRadius);
+            foreach (Collider2D collider in colliders)
+            {
+                if (((1 << collider.gameObject.layer) & bubbleLayer) != 0)
+                {
+                    GameObject obj = collider.gameObject;
+                    Vector2 targetDir = ((Vector2)obj.transform.position - (Vector2)transform.position).normalized;
+                    float angleToTarget = Vector2.Angle(bulletDir.normalized, targetDir);
+                    if (angleToTarget <= coneAngle)
+                    {
+                        float inverseDist = 1.0f/(0.5f + Vector2.Distance(transform.position, obj.transform.position)/2.0f);
+                        float angleStr = Mathf.InverseLerp(coneAngle, 0, angleToTarget);
+                        if(obj.CompareTag("Enemy"))
+                        {
+                            obj.transform.parent.GetComponent<Rigidbody2D>().AddForce(targetDir * fanPower*inverseDist*angleStr);    
+                        }
+                        else
+                            obj.GetComponent<Rigidbody2D>().AddForce(targetDir * fanPower*inverseDist*angleStr);
+                    }
+                }
+            }
+        }
     }
 
     private float GetMouseRot()
@@ -268,7 +267,7 @@ public class PlayerController : MonoBehaviour
 
     public void TakeDamage(float dmg)
     {   
-        audioManager.Play("PlayerHit");
+        GameObject.Find("AudioManager").GetComponent<AudioManager>().Play("PlayerHit");
         hpBar.transform.parent.gameObject.SetActive(true);
         if(!playerInvulnerability || health >= 3)
         {
@@ -304,7 +303,7 @@ public class PlayerController : MonoBehaviour
 
     public void AddScore(int enemyScore)
     {
-        audioManager.Play("Ping");
+        GameObject.Find("AudioManager").GetComponent<AudioManager>().Play("Ping");
         comboCounter = 3f;
         if(enemyScore > 5)
         {
