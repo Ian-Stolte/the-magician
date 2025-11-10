@@ -28234,7 +28234,7 @@ MonoBehaviour:
   enemies: {fileID: 817879012}
   enemyText: {fileID: 1279189395}
   dashBind: 32
-  shootBind: 113
+  shootBind: 323
   fanBind: 324
   maxHealth: 10
   health: 0
