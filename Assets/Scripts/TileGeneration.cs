@@ -1,0 +1,327 @@
+using System.Collections;
+using System.Collections.Generic;
+using Unity.VisualScripting;
+using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.Tilemaps;
+using TMPro;
+
+public class TileGeneration : MonoBehaviour
+{
+    [Header("Tilemap")]
+    [SerializeField] Tilemap map;
+    [SerializeField] int gridSize;
+    [SerializeField] Vector2Int[] directions = new Vector2Int[4];
+    [SerializeField] RuleTile ruleTile;
+    [SerializeField] GameObject lightPrefab;
+    [HideInInspector] public bool generating;
+
+    [Header("Spikes")]
+    [SerializeField] float spikePct;
+    [SerializeField] Tilemap spikeMap;
+    [SerializeField] Tilemap testMap;
+    [SerializeField] Tile[] spikeTiles;
+    private bool generatingSpikes;
+    private int spikesGenerated;
+
+    [Header("Enemies")]
+    [SerializeField] GameObject enemyPrefab;
+    [SerializeField] int minEnemies;
+    [SerializeField] int maxEnemies;
+    private List<Vector3Int> emptySpaces = new List<Vector3Int>();
+
+    [Header("UI")]
+    [SerializeField] GameObject fader;
+    [SerializeField] GameObject gameOver;
+    [SerializeField] GameObject pauseMenu;
+    
+    [Header("Progression")]
+    [SerializeField] TextMeshProUGUI levelTxt;
+    public int levelNum;
+    [SerializeField] UpgradeManager upgrades;
+
+    [Header("Transforms")]
+    [SerializeField] Transform player;
+    private bool playerSet;
+    [SerializeField] Transform enemies;
+    [SerializeField] Transform lighting;
+
+
+
+    private void Awake()
+    {
+        StartCoroutine(Generate(true));
+    }
+
+    private void Update()
+    {
+        if (enemies.childCount == 0 && !generating)
+            StartCoroutine(Generate(false));
+    }
+
+    public void NewGame()
+    {
+        levelNum = 0;
+        Time.timeScale = 1;
+        player.GetComponent<PlayerController>().health = player.GetComponent<PlayerController>().maxHealth;
+        player.GetComponent<PlayerController>().hpBar.GetComponent<Image>().fillAmount = 1;
+        upgrades.NewGame();
+        StartCoroutine(Generate(true));
+    }
+
+    public void Gen()
+    {
+        StartCoroutine(Generate(false));
+    }
+
+    public IEnumerator Generate(bool firstLevel)
+    {
+        generating = true;
+        if(!firstLevel)
+        {
+            float fadeIn = 0f;
+            while(fadeIn < 1f)
+            {
+                fader.GetComponent<CanvasGroup>().alpha = fadeIn;
+                fadeIn += Time.deltaTime;
+                yield return null;
+            }            
+        }
+
+        //Reset the scene
+        Random.InitState(System.Environment.TickCount);
+        map.ClearAllTiles();
+        spikeMap.ClearAllTiles();
+        testMap.ClearAllTiles();
+        emptySpaces.Clear();
+        foreach (Transform child in enemies)
+            Destroy(child.gameObject);
+        foreach (Transform child in lighting)
+            Destroy(child.gameObject);
+        playerSet = false;
+        gameOver.SetActive(false);
+        pauseMenu.SetActive(false);
+
+        //Fill the map with tiles
+        map.FloodFill(new Vector3Int(gridSize*2, gridSize*2, 0), ruleTile);
+        Vector2Int currentPos = new Vector2Int(gridSize, gridSize);
+        for(int i = 0; i < 120; i++)
+        {
+            Vector2Int multiplier = directions[Random.Range(0, directions.Length)];
+            if (currentPos.x + multiplier.x > gridSize*2-2 || currentPos.x + multiplier.x < 2 || currentPos.y + multiplier.y > gridSize*2-2 || currentPos.y + multiplier.y < 2)
+            {
+                multiplier *= -1;
+            }
+            for(int j = 1; j <= 4; j++)
+            {
+                for(int k = 1; k <= 4; k++) 
+                {
+                    Vector3Int loc = new Vector3Int(currentPos.x+multiplier.x+j, currentPos.y+multiplier.y+k, 0);
+                    map.SetTile(loc, null);
+                    emptySpaces.Add(loc);
+                }
+            }
+            currentPos += multiplier*3;
+        }
+
+        //Destroy overhanging pieces
+        for(int x = 0; x <= gridSize*2 -3; x++)
+        {
+            for(int y = 0; y <= gridSize*2 -3; y++)
+            {
+                if (NumNeighbors(new Vector3Int(x, y, 0), map) < 2 && map.HasTile(new Vector3Int(x, y, 0)))
+                {
+                    //Debug.Log("Destroying tile at (" + x + ", " + y + ")!");
+                    map.SetTile(new Vector3Int(x, y, 0), null);
+                    x = 0;
+                    y = 0;
+                }
+                if (!playerSet)
+                {
+                    bool validSpawn = true;
+                    for (int dx = -2; dx <= 2; dx++)
+                    {
+                        for (int dy = -2; dy <= 2; dy++)
+                        {
+                            if (map.HasTile(new Vector3Int(x + dx, y + dy, 0)) || spikeMap.HasTile(new Vector3Int(x + dx, y + dy, 0)))
+                            {
+                                validSpawn = false;
+                                break;
+                            }
+                        }
+                    }
+                    if (validSpawn)
+                    {
+                        playerSet = true;
+                        player.position = new Vector3(x, y, 0);
+                        RemoveEmpty(new Vector3Int(x, y, 0));
+                    }
+                }
+            }
+        }
+
+        //Spawn lights
+        for(int x = 1; x <= gridSize*2-1; x++)
+        {
+            for(int y = 1; y <= gridSize*2-1; y++)
+            {
+                if (AdjNeighbors(new Vector3Int(x, y, 0), map) < 4 && map.HasTile(new Vector3Int(x, y, 0)))
+                {
+                    Instantiate(lightPrefab, new Vector3(x, y, 0), Quaternion.identity, lighting);
+                }
+            }
+        }
+
+        //Create border
+        for (int x = -15; x < gridSize*2+15; x++)
+        {
+            for (int y = -15; y < gridSize*2+15; y++)
+            {
+                if (x < 0 || x > gridSize*2 || y < 0 || y > gridSize*2)
+                    map.SetTile(new Vector3Int(x, y, 0), ruleTile);
+            }
+        }
+
+        //Generate spikes
+        for(int x = 0; x <= gridSize*2; x++)
+        {
+            for(int y = 0; y <= gridSize*2; y++)
+            {
+                OpenSpot(new Vector3Int(x, y, 0));
+            }
+        }
+
+        //Spawn enemies
+        int offset = 0;
+        if (emptySpaces.Count > 600)
+            offset = 2;
+        else if (emptySpaces.Count > 400)
+            offset = 1;
+        int numEnemies = Random.Range(minEnemies, maxEnemies-1 + offset);
+        int enemiesSpawned = 0;
+        int timesAttempted = 0;
+        while (enemiesSpawned < numEnemies && timesAttempted < 30)
+        {
+            Vector3Int randomTile = emptySpaces[Random.Range(0, emptySpaces.Count)];
+            timesAttempted++;
+            if (NumNeighbors(randomTile, map) == 0 && NumNeighbors(randomTile, spikeMap) == 0 && randomTile.x > 0 && randomTile.y > 0 && randomTile.x < gridSize*2 && randomTile.y < gridSize*2)
+            {
+                GameObject enemy = Instantiate(enemyPrefab, randomTile, Quaternion.identity, enemies);
+                enemy.GetComponent<EnemyMovement>().mode = "IDLE";
+                enemiesSpawned++;
+                RemoveEmpty(randomTile);
+            }
+        }
+
+        if(firstLevel)
+            player.GetComponent<GameManager>().ResetScore();
+
+        //Progression
+        levelNum++;
+        levelTxt.text = "Level:  " + levelNum;
+        yield return upgrades.NextRoom(levelNum);
+
+        float fadeOut = 1f;
+        while(fadeOut > 0)
+        {
+            fader.GetComponent<CanvasGroup>().alpha = fadeOut;
+            fadeOut -= Time.deltaTime;
+            yield return null;
+        }
+
+        generating = false;
+        foreach (Transform child in enemies)
+            child.GetComponent<EnemyMovement>().mode = "MOVE";
+        player.GetComponent<GameManager>().paused = false;
+    }
+
+    private void RemoveEmpty(Vector3Int pos)
+    {
+        HashSet<Vector3Int> emptySpacesHash = new HashSet<Vector3Int>(emptySpaces);
+        for (int dx = -4; dx <= 4; dx++)
+        {
+            for (int dy = -4; dy <= 4; dy++)
+            {
+                emptySpacesHash.Remove(pos + new Vector3Int(dx, dy, 0));
+            }
+        }
+        emptySpaces = new List<Vector3Int>(emptySpacesHash);
+    }
+
+
+    private int NumNeighbors(Vector3Int currentPos, Tilemap tilemap)
+    {
+        int neighbors = 0;
+        for (int x = -1; x <= 1; x++)
+        {
+            for (int y = -1; y <= 1; y++)
+            {
+                if (map.HasTile(new Vector3Int(currentPos.x + x, currentPos.y + y, 0)) && !(x == 0 && y == 0))
+                    neighbors++;
+            }
+        }
+        return neighbors;
+    }
+
+    private int AdjNeighbors(Vector3Int currentPos, Tilemap tilemap)
+    {
+        int neighbors = 0;
+        foreach (Vector2Int dir in directions)
+        {
+            if (tilemap.HasTile(new Vector3Int(currentPos.x + dir.x, currentPos.y + dir.y, 0)))
+                neighbors++;
+        }
+        return neighbors;
+    }
+
+
+    private void OpenSpot(Vector3Int v3)
+    {
+        //3x2 bool groups, check if have space for 3 spikes, and then spawn all 3 at once        
+        CheckArea(new bool[]{false, false, false, true, true, true}, new Vector3Int(0, 2, 0), 3, spikeTiles[0], v3);
+        CheckArea(new bool[]{true, true, true, false, false, false}, new Vector3Int(0, -2, 0), 3, spikeTiles[1], v3);
+        CheckArea(new bool[]{true, false, true, false, true, false}, new Vector3Int(2, 0, 0), 2, spikeTiles[2], v3);
+        CheckArea(new bool[]{false, true, false, true, false, true}, new Vector3Int(-2, 0, 0), 2, spikeTiles[3], v3);
+    }
+
+    private void CheckArea(bool[] pattern, Vector3Int direction, int cols, Tile spikeTile, Vector3Int v3, int fillDir = 0)
+    {
+        bool match = true;
+        for (int i = 0; i < 6; i++)
+        {
+            Vector3Int loc = new Vector3Int(v3.x + i%cols, v3.y + i/cols, 0);
+            if (map.HasTile(loc) != pattern[i] || spikeMap.HasTile(loc + direction))
+            {
+                if (spikeMap.HasTile(loc + direction))
+                {
+                    testMap.SetTile(loc, ruleTile);
+                }
+                match = false;
+                break;
+            }
+        }
+        if (match)
+        {
+            if (Random.Range(0f, 1f) < spikePct || fillDir != 0)
+            {
+                for (int i = 0; i < 6; i++)
+                {
+                    if (!pattern[i])
+                    {
+                        GenerateSpike(new Vector3Int(v3.x + i%cols, v3.y + i/cols), spikeTile);
+                    }
+                }
+                Vector3Int offset = (cols == 3) ? new Vector3Int(1, 0, 0) : new Vector3Int(0, 1, 0);
+                if (fillDir == 0 || fillDir == 1)
+                    CheckArea(pattern, direction, cols, spikeTile, v3 + offset, 1);
+                if (fillDir == 0 || fillDir == -1)
+                    CheckArea(pattern, direction, cols, spikeTile, v3 + offset*-1, 1);
+            }
+        }
+    }
+
+    public void GenerateSpike(Vector3Int v3, Tile spikeTile)
+    {
+        spikeMap.SetTile(v3, spikeTile);
+    }
+}
