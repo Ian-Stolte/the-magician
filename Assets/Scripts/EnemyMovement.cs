@@ -21,21 +21,25 @@ public class EnemyMovement : MonoBehaviour
     [SerializeField] private float followDist;
 
     [Header("Attack")]
-    [SerializeField] private float attackDelay;
+    [SerializeField] private float minDelay;
+    [SerializeField] private float maxDelay;
     [SerializeField] private float attackDist;
-    [SerializeField] private float attackChargeTime;
+    [SerializeField] private float minChargeTime;
+    [SerializeField] private float maxChargeTime;
     [SerializeField] private GameObject bulletPrefab;
     private float attackTimer;
 
     //References
     private Transform player;
     private Pathfinding pathfinding;
+    private TileGeneration tileGen;
     private AudioManager audioManager;
 
 
     void Start()
     {
         pathfinding = GameObject.Find("Pathfinding Grid").GetComponent<Pathfinding>();
+        tileGen = GameObject.Find("Walls").GetComponent<TileGeneration>();
         player = GameObject.Find("Player").transform;
         audioManager = GameObject.Find("Audio Manager").GetComponent<AudioManager>();
     }
@@ -123,6 +127,7 @@ public class EnemyMovement : MonoBehaviour
     {
         Vector3 bulletDir = Vector3.zero;
         transform.GetChild(1).gameObject.SetActive(true);
+        float attackChargeTime = Mathf.Lerp(maxChargeTime, minChargeTime, (tileGen.levelNum-1) / 15f);
         for (float i = 0; i < attackChargeTime; i += 0.01f)
         {
             if (!lineOfSight || mode == "IDLE")
@@ -134,12 +139,12 @@ public class EnemyMovement : MonoBehaviour
                 yield break;
             }
             yield return new WaitForSeconds(0.01f);
-            GetComponent<SpriteRenderer>().color = Color.Lerp(idleColor, attackColor, i/attackChargeTime);
+            GetComponent<SpriteRenderer>().color = Color.Lerp(idleColor, attackColor, i / attackChargeTime);
 
             //Rotate gun
             bulletDir = (player.position - transform.position).normalized;
             float angle = Mathf.Atan2(bulletDir.y, bulletDir.x) * Mathf.Rad2Deg;
-            float angleChange = (angle-90) - transform.GetChild(1).transform.rotation.eulerAngles.z;
+            float angleChange = (angle - 90) - transform.GetChild(1).transform.rotation.eulerAngles.z;
             transform.GetChild(1).RotateAround(transform.position, new Vector3(0, 0, 1), angleChange);
         }
         GameObject bullet = Instantiate(bulletPrefab, transform.position + bulletDir, Quaternion.identity, GameObject.Find("Bullets").transform);
@@ -147,6 +152,7 @@ public class EnemyMovement : MonoBehaviour
         bullet.transform.rotation = RotateToward(player.position, transform.position);
 
         GetComponent<SpriteRenderer>().color = idleColor;
+        float attackDelay = Mathf.Lerp(maxDelay, minDelay, (tileGen.levelNum-1) / 15f);
         attackTimer = attackDelay;
         mode = "MOVE";
         transform.GetChild(1).gameObject.SetActive(false);

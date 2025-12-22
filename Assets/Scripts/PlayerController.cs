@@ -128,16 +128,22 @@ public class PlayerController : MonoBehaviour
                 }
             }
 
+            // Mouse Aim
+            if (Input.touchCount == 0)
+            {
+                SetAimDir(Input.mousePosition);
+            }
+
             //Fire bubble
             bubbleDelay = Mathf.Max(0, bubbleDelay - Time.deltaTime);
-            /*if (Input.GetMouseButtonDown(0))
-                FireBubble();*/
+            if (Input.GetMouseButtonDown(0))
+                FireBubble();
 
             //Blow fan
-            /*if (Input.GetMouseButton(1))
+            if (Input.GetMouseButton(1))
                 StartFan();
             if (Input.GetMouseButtonUp(1))
-                StopFan();*/
+                StopFan();
             transform.GetChild(0).GetChild(0).GetChild(0).gameObject.SetActive(fanOn);
             transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = !fanOn;   
             if (fanOn)
@@ -243,7 +249,7 @@ public class PlayerController : MonoBehaviour
         aimDir = new Vector3(mouseXChange, mouseYChange, 0);
         aimDir = Vector3.Normalize(aimDir);
 
-        float mouseAngle = (Mathf.Atan2(mouseYChange, mouseXChange) * Mathf.Rad2Deg - 90);
+        float mouseAngle = Mathf.Atan2(mouseYChange, mouseXChange) * Mathf.Rad2Deg - 90;
         transform.GetChild(0).transform.RotateAround(transform.position - new Vector3(0, 0.2f, 0), new Vector3(0, 0, 1), mouseAngle - transform.GetChild(0).transform.rotation.eulerAngles.z);
     }
 

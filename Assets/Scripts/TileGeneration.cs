@@ -198,6 +198,14 @@ public class TileGeneration : MonoBehaviour
         else if (emptySpaces.Count > 400)
             offset = 1;
         int numEnemies = Random.Range(minEnemies, maxEnemies-1 + offset);
+
+        if (levelNum >= 18)
+            numEnemies += 3;
+        else if (levelNum >= 12)
+            numEnemies += 2;
+        else if (levelNum >= 6)
+            numEnemies += 1;
+
         int enemiesSpawned = 0;
         int timesAttempted = 0;
         while (enemiesSpawned < numEnemies && timesAttempted < 30)

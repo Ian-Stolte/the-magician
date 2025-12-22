@@ -10136,8 +10136,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 9f2ea35d362f06a4bb13995566f83190, type: 2}
   - {fileID: 11400000, guid: b68102399f447724b942be7fd9aa8525, type: 2}
   enemyPrefab: {fileID: 5110696319705830520, guid: 92806911f128fc541ad2a846077f30ab, type: 3}
-  minEnemies: 3
-  maxEnemies: 8
+  minEnemies: 2
+  maxEnemies: 6
   fader: {fileID: 774975899}
   gameOver: {fileID: 259596353}
   pauseMenu: {fileID: 536654168}

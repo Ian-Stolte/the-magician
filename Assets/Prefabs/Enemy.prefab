@@ -589,14 +589,16 @@ MonoBehaviour:
   idleColor: {r: 1, g: 1, b: 1, a: 1}
   attackColor: {r: 1, g: 0.5990566, b: 0.5990566, a: 1}
   pathReady: 0
+  lineOfSight: 0
   speed: 3
   turnSpeed: 20
   followDist: 10
-  attackDelay: 3
+  minDelay: 1
+  maxDelay: 3.5
   attackDist: 5
-  attackChargeTime: 1
+  minChargeTime: 0.5
+  maxChargeTime: 1.25
   bulletPrefab: {fileID: 8348187279453292934, guid: 402c4d8c67f36974ba184cbc5c87667a, type: 3}
-  lineOfSight: 0
 --- !u!114 &5339049904445440604
 MonoBehaviour:
   m_ObjectHideFlags: 0

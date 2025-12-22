@@ -41,10 +41,7 @@ public class UpgradeManager : MonoBehaviour
 
         upgradesAvailable = new List<Upgrade>(upgrades);
         currentUpgrades.Clear();
-
-        //TODO: re-add one time upgrades (noSpikes)
-
-        //undo special upgrades
+        //TODO: undo special upgrades
     }
 
     public IEnumerator NextRoom(int levelNum)
@@ -83,13 +80,13 @@ public class UpgradeManager : MonoBehaviour
         List<int> usedIndices = new List<int>();
         
         //force explode to appear if available
-        Upgrade explode = upgradesAvailable.Find(u => u.id == "bubbleExplode");
+        /*Upgrade explode = upgradesAvailable.Find(u => u.id == "bubbleExplode");
         if (explode != null)
         {
             randomUpgrades.Add(explode);
             usedIndices.Add(upgradesAvailable.IndexOf(explode));
             count--;
-        }
+        }*/
 
         for (int i = 0; i < count && i < upgradesAvailable.Count; i++)
         {
