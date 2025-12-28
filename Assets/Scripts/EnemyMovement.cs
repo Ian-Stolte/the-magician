@@ -127,7 +127,8 @@ public class EnemyMovement : MonoBehaviour
     {
         Vector3 bulletDir = Vector3.zero;
         transform.GetChild(1).gameObject.SetActive(true);
-        float attackChargeTime = Mathf.Lerp(maxChargeTime, minChargeTime, (tileGen.levelNum-1) / 15f);
+        int levelNum = (tileGen != null) ? tileGen.levelNum-1 : 0;
+        float attackChargeTime = Mathf.Lerp(maxChargeTime, minChargeTime, levelNum / 15f);
         for (float i = 0; i < attackChargeTime; i += 0.01f)
         {
             if (!lineOfSight || mode == "IDLE")
@@ -152,7 +153,7 @@ public class EnemyMovement : MonoBehaviour
         bullet.transform.rotation = RotateToward(player.position, transform.position);
 
         GetComponent<SpriteRenderer>().color = idleColor;
-        float attackDelay = Mathf.Lerp(maxDelay, minDelay, (tileGen.levelNum-1) / 15f);
+        float attackDelay = Mathf.Lerp(maxDelay, minDelay, levelNum / 15f);
         attackTimer = attackDelay;
         mode = "MOVE";
         transform.GetChild(1).gameObject.SetActive(false);

@@ -41,7 +41,6 @@ public class UpgradeManager : MonoBehaviour
 
         upgradesAvailable = new List<Upgrade>(upgrades);
         currentUpgrades.Clear();
-        //TODO: undo special upgrades
     }
 
     public IEnumerator NextRoom(int levelNum)
@@ -58,7 +57,7 @@ public class UpgradeManager : MonoBehaviour
             for (int i = 0; i < 3; i++)
             {
                 GameObject option = Instantiate(upgradeOption, Vector3.zero, Quaternion.identity, upgradeParent);
-                option.GetComponent<RectTransform>().anchoredPosition = new Vector3(-700 + 700*i, 0);
+                option.GetComponent<RectTransform>().anchoredPosition = new Vector3(-610 + 610*i, 0);
                 UpgradeChoice script = option.GetComponent<UpgradeChoice>();
                 script.upgrade = choices[i];
                 script.upgradeManager = this;
@@ -135,7 +134,7 @@ public class UpgradeManager : MonoBehaviour
         else
         {
             GameObject newIcon = Instantiate(upgradeIcon, Vector2.zero, Quaternion.identity, iconParent.transform);
-            newIcon.GetComponent<RectTransform>().anchoredPosition = new Vector2(-650 + 160*currentUpgrades.Count, 0);
+            newIcon.GetComponent<RectTransform>().anchoredPosition = new Vector2(160*currentUpgrades.Count, 0);
             newIcon.transform.GetChild(1).GetComponent<Image>().sprite = u.icon;
             TextMeshProUGUI txt = newIcon.transform.GetChild(2).GetComponent<TextMeshProUGUI>();
             if (!u.id.Contains("buff_"))

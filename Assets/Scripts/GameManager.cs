@@ -35,6 +35,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] TileGeneration tileGen;
     private AudioManager audioManager;
     private PlatformSettings platform;
+    
+    public TextMeshProUGUI platformText;
         
 
     void Start()
@@ -42,6 +44,8 @@ public class GameManager : MonoBehaviour
         scoreMultiplier = 1f;
         audioManager = GameObject.Find("Audio Manager").GetComponent<AudioManager>();
         platform = PlatformSettings.Get();
+        if (platformText)
+            platformText.text = "Mobile: " + platform.mobile;
     }
 
     void Update()

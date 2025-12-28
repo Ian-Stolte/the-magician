@@ -136,7 +136,7 @@ public class PlayerController : MonoBehaviour
 
             //Fire bubble
             bubbleDelay = Mathf.Max(0, bubbleDelay - Time.deltaTime);
-            if (Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonDown(0) && Input.touchCount == 0)
                 FireBubble();
 
             //Blow fan

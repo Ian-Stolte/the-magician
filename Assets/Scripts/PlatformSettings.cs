@@ -11,7 +11,8 @@ public class PlatformSettings : MonoBehaviour
     public bool editorOverride;
 
     [Header("Rotation")]
-    [SerializeField] private GameObject rotateOverlay;
+    [SerializeField] GameObject rotateOverlay;
+    [SerializeField] TMPro.TextMeshProUGUI debugText;
     private int width;
     private int height;
 
@@ -46,16 +47,15 @@ public class PlatformSettings : MonoBehaviour
 
     private bool IsMobileBrowser()
     {
-        if (Input.touchSupported)
-            return true;
-
         float minDimension = Mathf.Min(Screen.width, Screen.height);
-        return minDimension <= 768;
+        return minDimension <= 768 && Input.touchSupported;
     }
 
     void EvaluateOrientation()
     {
         bool landscape = Screen.width >= Screen.height * 1.5f;
+        if (debugText)
+            debugText.text = Screen.width + " x " + Screen.height;
 
         //gameRoot.SetActive(landscape);
         rotateOverlay.SetActive(!landscape);
