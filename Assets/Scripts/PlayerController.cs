@@ -56,6 +56,7 @@ public class PlayerController : MonoBehaviour
     private AudioManager audioManager;
     private GameManager gameManager;
     private PlayerStats stats;
+    private PlatformSettings platform;
 
 
     void Start()
@@ -69,6 +70,8 @@ public class PlayerController : MonoBehaviour
         stats = GetComponent<PlayerStats>();
         bubbleParent = GameObject.Find("Bubbles").transform;
         audioManager = GameObject.Find("Audio Manager").GetComponent<AudioManager>();
+
+        platform = PlatformSettings.Get();
     }
 
     private Rect CreateRect(RectTransform rect)
@@ -96,54 +99,61 @@ public class PlayerController : MonoBehaviour
             if (health <= 0)
                 gameManager.GameOver();
 
+            bubbleDelay = Mathf.Max(0, bubbleDelay - Time.deltaTime);
+
             //Touch Input
-            for (int i = 0; i < Input.touchCount; i++)
+            if (platform.mobile)
             {
-                var t = Input.GetTouch(i);
-            
-                if (t.phase == TouchPhase.Began)
+                for (int i = 0; i < Input.touchCount; i++)
                 {
-                    if (abilityTouch == -1 && !joystickRect.Contains(t.position) && !dashRect.Contains(t.position))
+                    var t = Input.GetTouch(i);
+                
+                    if (t.phase == TouchPhase.Began)
                     {
-                        abilityTouch = t.fingerId;
-                        touchTimer = 0;
+                        if (abilityTouch == -1 && !joystickRect.Contains(t.position) && !dashRect.Contains(t.position))
+                        {
+                            abilityTouch = t.fingerId;
+                            touchTimer = 0;
+                        }
                     }
-                }
 
-                if (t.fingerId == abilityTouch)
-                {
-                    touchTimer += Time.deltaTime;
-                    if (touchTimer > 0.15f && !fanOn)
-                        StartFan();
-                    SetAimDir(t.position);
-                }
+                    if (t.fingerId == abilityTouch)
+                    {
+                        touchTimer += Time.deltaTime;
+                        if (touchTimer > 0.15f && !fanOn)
+                            StartFan();
+                        SetAimDir(t.position);
+                    }
 
-                if (t.phase == TouchPhase.Ended && t.fingerId == abilityTouch)
-                {
-                    abilityTouch = -1;
-                    if (touchTimer < 0.15f)
-                        FireBubble();
-                    else
-                        StopFan();
+                    if (t.phase == TouchPhase.Ended && t.fingerId == abilityTouch)
+                    {
+                        abilityTouch = -1;
+                        if (touchTimer < 0.15f)
+                            FireBubble();
+                        else
+                            StopFan();
+                    }
                 }
             }
 
             // Mouse Aim
-            if (Input.touchCount == 0)
+            if (!platform.mobile)
             {
-                SetAimDir(Input.mousePosition);
+                if (Input.touchCount == 0)
+                {
+                    SetAimDir(Input.mousePosition);
+                }
+
+                //Fire bubble
+                if (Input.GetMouseButtonDown(0) && Input.touchCount == 0)
+                    FireBubble();
+
+                //Blow fan
+                if (Input.GetMouseButton(1))
+                    StartFan();
+                if (Input.GetMouseButtonUp(1))
+                    StopFan();
             }
-
-            //Fire bubble
-            bubbleDelay = Mathf.Max(0, bubbleDelay - Time.deltaTime);
-            if (Input.GetMouseButtonDown(0) && Input.touchCount == 0)
-                FireBubble();
-
-            //Blow fan
-            if (Input.GetMouseButton(1))
-                StartFan();
-            if (Input.GetMouseButtonUp(1))
-                StopFan();
             transform.GetChild(0).GetChild(0).GetChild(0).gameObject.SetActive(fanOn);
             transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = !fanOn;   
             if (fanOn)
@@ -171,7 +181,7 @@ public class PlayerController : MonoBehaviour
 
             //Dash
             dashTimer = Mathf.Max(0, dashTimer - Time.deltaTime);
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (!platform.mobile && Input.GetKeyDown(KeyCode.Space))
                 Dash();
         }
         dashCDFill.fillAmount = dashTimer/dashDelay;

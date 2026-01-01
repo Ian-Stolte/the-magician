@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.Tilemaps;
 using TMPro;
@@ -36,8 +37,9 @@ public class TileGeneration : MonoBehaviour
     [SerializeField] GameObject pauseMenu;
     
     [Header("Progression")]
-    [SerializeField] TextMeshProUGUI levelTxt;
     public int levelNum;
+    [SerializeField] bool bossLevel;
+    [SerializeField] TextMeshProUGUI levelTxt;
     [SerializeField] UpgradeManager upgrades;
 
     [Header("Transforms")]
@@ -50,12 +52,13 @@ public class TileGeneration : MonoBehaviour
 
     private void Awake()
     {
-        StartCoroutine(Generate(true));
+        if (!bossLevel)
+            StartCoroutine(Generate(true));
     }
 
     private void Update()
     {
-        if (enemies.childCount == 0 && !generating)
+        if (enemies.childCount == 0 && !generating && !bossLevel)
             StartCoroutine(Generate(false));
     }
 

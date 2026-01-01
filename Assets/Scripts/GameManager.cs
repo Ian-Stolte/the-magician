@@ -33,19 +33,23 @@ public class GameManager : MonoBehaviour
 
     [Header("References")]
     [SerializeField] TileGeneration tileGen;
+    [SerializeField] GameObject joystick;
+    [SerializeField] GameObject dashButton;
     private AudioManager audioManager;
     private PlatformSettings platform;
-    
-    public TextMeshProUGUI platformText;
-        
+            
 
     void Start()
     {
         scoreMultiplier = 1f;
         audioManager = GameObject.Find("Audio Manager").GetComponent<AudioManager>();
+        
         platform = PlatformSettings.Get();
-        if (platformText)
-            platformText.text = "Mobile: " + platform.mobile;
+        joystick.SetActive(platform.mobile);
+        dashButton.SetActive(platform.mobile);
+
+        if (platform.mobile)
+            Camera.main.orthographicSize = 5f;
     }
 
     void Update()

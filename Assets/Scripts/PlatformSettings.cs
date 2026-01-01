@@ -7,7 +7,8 @@ public class PlatformSettings : MonoBehaviour
     void Awake() { settings = this; }
 
     [Header("Platform Bools")]
-    [HideInInspector] public bool mobile;
+    public bool mobile;
+    private bool inputDetected;
     public bool editorOverride;
 
     [Header("Rotation")]
@@ -22,7 +23,7 @@ public class PlatformSettings : MonoBehaviour
         #if UNITY_EDITOR
             mobile = editorOverride;
         #elif UNITY_WEBGL
-            mobile = IsMobileBrowser();
+            mobile = IsMobileBrowser(); //change to unknown until first touch? (would need enum)
         #elif UNITY_ANDROID || UNITY_IOS
             mobile = true;
         #else
@@ -43,12 +44,25 @@ public class PlatformSettings : MonoBehaviour
             height = Screen.height;
             EvaluateOrientation();
         }
+
+        //wait for first input to determine platform type
+        if (!inputDetected && Input.touchCount > 0)
+        {
+            inputDetected = true;
+            mobile = true;
+        }
+        else if (!inputDetected && Input.GetMouseButtonDown(0))
+        {
+            inputDetected = true;
+            mobile = false;
+        }
     }
 
-    private bool IsMobileBrowser()
+    private bool IsMobileBrowser() //this is not accurate
     {
-        float minDimension = Mathf.Min(Screen.width, Screen.height);
-        return minDimension <= 768 && Input.touchSupported;
+        //float minDimension = Mathf.Min(Screen.width, Screen.height);
+        //return minDimension <= 768 && Input.touchSupported;
+        return Input.touchSupported;
     }
 
     void EvaluateOrientation()
@@ -57,7 +71,6 @@ public class PlatformSettings : MonoBehaviour
         if (debugText)
             debugText.text = Screen.width + " x " + Screen.height;
 
-        //gameRoot.SetActive(landscape);
         rotateOverlay.SetActive(!landscape);
         Time.timeScale = landscape ? 1f : 0f;
     }

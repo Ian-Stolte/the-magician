@@ -6,7 +6,7 @@ using UnityEngine;
 public class TutorialLoad : MonoBehaviour
 {
     [Header("UI")]
-    [SerializeField] FadeMessage fader;
+    [SerializeField] Fader fader;
     [SerializeField] GameObject hpBar;
     [SerializeField] GameObject enemiesText;
 

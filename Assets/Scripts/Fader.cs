@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class FadeMessage : MonoBehaviour
+public class Fader : MonoBehaviour
 {
     [SerializeField] CanvasGroup canvasGroup;
 
