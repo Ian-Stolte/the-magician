@@ -23629,6 +23629,8 @@ MonoBehaviour:
   maxHealth: 20
   enemyPrefab: {fileID: 5110696319705830520, guid: 57ec8fdf7da121842902f7d933c3ee64, type: 3}
   enemyParent: {fileID: 817879012}
+  cardPrefab: {fileID: 1493778325398253426, guid: 7585aa0efeaf2b946842b1f9b70ac7a5, type: 3}
+  bulletParent: {fileID: 56882043}
 --- !u!212 &7567615771912933469
 SpriteRenderer:
   m_ObjectHideFlags: 0

@@ -11,11 +11,18 @@ public class BossCard : MonoBehaviour
     [SerializeField] GameObject enemyPrefab;
     [SerializeField] Transform enemyParent;
 
+    [Header("Attacks")]
+    [SerializeField] GameObject cardPrefab;
+    [SerializeField] Transform bulletParent;
+
 
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.M))
             StartCoroutine(SpawnEnemies(4));
+
+        if (Input.GetKeyDown(KeyCode.E))
+            StartCoroutine(CardExplode(transform.position + Random.insideUnitSphere * 8f));
     }
 
 
@@ -31,7 +38,8 @@ public class BossCard : MonoBehaviour
 
     private IEnumerator SpawnEnemies(int n)
     {
-        //show dialogue? spawn an enemy & spotlight at different points, waiting a moment between each
+        //show dialogue?
+
         Time.timeScale = 0.4f;
         for (int i = 0; i < n; i++)
         {
@@ -44,10 +52,20 @@ public class BossCard : MonoBehaviour
         Time.timeScale = 1f;
     }
 
-    private void CardExplode()
+    private IEnumerator CardExplode(Vector3 position)
     {
         //pick a point, spawn a card, wait a second, spawn cards in all directions with velocities away from the center
+        GameObject rootCard = Instantiate(cardPrefab, position, Quaternion.identity, bulletParent);
+        yield return new WaitForSeconds(1f);
+        Destroy(rootCard);
 
+        for (int i = 0; i < 6; i++)
+        {
+            float angle = (360f / 6) * i;
+            Vector3 direction = new Vector3(Mathf.Cos(angle * Mathf.Deg2Rad), Mathf.Sin(angle * Mathf.Deg2Rad), 0);
+            GameObject card = Instantiate(cardPrefab, position, Quaternion.identity, bulletParent);
+            card.GetComponent<CardProjectile>().direction = direction;
+        }
     }
 
     private void CardSpring()
