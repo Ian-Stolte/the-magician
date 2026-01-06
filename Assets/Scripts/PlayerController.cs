@@ -154,6 +154,8 @@ public class PlayerController : MonoBehaviour
                 if (Input.GetMouseButtonUp(1))
                     StopFan();
             }
+
+            //Fan
             transform.GetChild(0).GetChild(0).GetChild(0).gameObject.SetActive(fanOn);
             transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = !fanOn;   
             if (fanOn)
@@ -170,10 +172,11 @@ public class PlayerController : MonoBehaviour
                         {
                             float inverseDist = 1.0f/(0.5f + Vector2.Distance(transform.position, obj.transform.position)/2.0f);
                             float angleStr = Mathf.InverseLerp(coneAngle, 0, angleToTarget);
-                            if(obj.CompareTag("Enemy"))
-                                obj.transform.parent.GetComponent<Rigidbody2D>().AddForce(targetDir * stats.fanPower.val*inverseDist*angleStr * Time.deltaTime, ForceMode2D.Impulse);    
+                            Vector2 force = targetDir * stats.fanPower.val*inverseDist*angleStr * Time.deltaTime;
+                            if(obj.CompareTag("Enemy") || obj.CompareTag("Deflectable"))
+                                obj.transform.parent.GetComponent<Rigidbody2D>().AddForce(force, ForceMode2D.Impulse);    
                             else
-                                obj.GetComponent<Rigidbody2D>().AddForce(targetDir * stats.fanPower.val*inverseDist*angleStr * Time.deltaTime, ForceMode2D.Impulse);
+                                obj.GetComponent<Rigidbody2D>().AddForce(force, ForceMode2D.Impulse);
                         }
                     }
                 }

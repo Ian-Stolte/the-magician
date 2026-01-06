@@ -1,9 +1,11 @@
 using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 public class BossCard : MonoBehaviour
 {
     [Header("Health")]
+    [SerializeField] Image healthBar;
     [SerializeField] int maxHealth;
     private int health;
 
@@ -11,18 +13,61 @@ public class BossCard : MonoBehaviour
     [SerializeField] GameObject enemyPrefab;
     [SerializeField] Transform enemyParent;
 
+    [Header("Attack Timers")]
+    [SerializeField] float spawnDelay;
+    private float spawnTimer;
+    [SerializeField] float explosionDelay;
+    private float explosionTimer;
+    [SerializeField] float fireDelay;
+    private float fireTimer;
+
     [Header("Attacks")]
     [SerializeField] GameObject cardPrefab;
+    [SerializeField] GameObject deflectablePrefab;
     [SerializeField] Transform bulletParent;
+    private bool firing;
 
+    [Header("References")]
+    private Transform player;
+
+
+    void Start()
+    {
+        health = maxHealth;
+        player = GameObject.Find("Player").transform;
+
+        spawnTimer = 2f;
+        explosionTimer = 5f;
+        fireTimer = 10f;
+    }
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.M))
+        //Spawn enemies
+        spawnTimer -= Time.deltaTime;
+        if (spawnTimer <= 0)
+        {
+            spawnTimer = spawnDelay;
             StartCoroutine(SpawnEnemies(4));
+        }
 
-        if (Input.GetKeyDown(KeyCode.E))
-            StartCoroutine(CardExplode(transform.position + Random.insideUnitSphere * 8f));
+        //Card explosions
+        if (!firing && fireTimer > 1f)
+            explosionTimer -= Time.deltaTime;
+        if (explosionTimer <= 0)
+        {
+            explosionTimer = explosionDelay;
+            StartCoroutine(PickExplosionPoints(4));
+        }
+
+        //Card fire
+        if (explosionTimer > 1f)
+            fireTimer -= Time.deltaTime;
+        if (fireTimer <= 0)
+        {
+            fireTimer = fireDelay;
+            StartCoroutine(FireCards(5));
+        }
     }
 
 
@@ -31,8 +76,23 @@ public class BossCard : MonoBehaviour
         GameObject body = col.gameObject;
         if(body.CompareTag("Bubble"))
         {
-            //TODO: take damage if bubbled projectile
             Destroy(body);
+        }
+        else if (body.CompareTag("Deflectable"))
+        {
+            Destroy(body);
+
+            //Check health
+            health -= 1;
+            if (health <= 0)
+            {
+                Destroy(gameObject);
+                foreach (GameObject enemy in GameObject.FindGameObjectsWithTag("Enemy"))
+                    Destroy(enemy);
+                Destroy(healthBar.transform.parent.gameObject);
+            }
+            healthBar.fillAmount = health / (float)maxHealth;
+            //TODO: taking damage vfx
         }
     }
 
@@ -52,11 +112,28 @@ public class BossCard : MonoBehaviour
         Time.timeScale = 1f;
     }
 
+
+    private IEnumerator PickExplosionPoints(int n)
+    {
+        for (int i = 0; i < n; i++)
+        {
+            Vector3 targetPos = Vector3.zero;
+            do
+            {
+                targetPos = transform.position + Random.insideUnitSphere * 8f;
+            } while (Vector3.Distance(player.position, targetPos) < 2.5f);
+            StartCoroutine(CardExplode(targetPos));
+            yield return new WaitForSeconds(0.5f);
+        }
+    }
+
     private IEnumerator CardExplode(Vector3 position)
     {
-        //pick a point, spawn a card, wait a second, spawn cards in all directions with velocities away from the center
+        //spawn a card, wait a second, then spawn cards shooting away from the center in all directions
         GameObject rootCard = Instantiate(cardPrefab, position, Quaternion.identity, bulletParent);
         yield return new WaitForSeconds(1f);
+        if (rootCard == null)
+            yield break;
         Destroy(rootCard);
 
         for (int i = 0; i < 6; i++)
@@ -68,8 +145,23 @@ public class BossCard : MonoBehaviour
         }
     }
 
+
+    private IEnumerator FireCards(int n)
+    {
+        firing = true;
+        //rapidly shoot cards toward the player-- if bubbled, they can be fired back
+        for (int i = 0; i < n; i++)
+        {
+            Vector3 direction = (player.position - transform.position).normalized;
+            GameObject card = Instantiate(deflectablePrefab, transform.position, Quaternion.identity, bulletParent);
+            card.GetComponent<Deflectable>().direction = direction;
+            yield return new WaitForSeconds(0.5f);
+        }
+        firing = false;
+    }
+
     private void CardSpring()
     {
-        //pick two points, spawn a deck at the first, wait a second, spawn cards moving from the deck to the second point
+        //pick two points, spawn a deck at the first, wait a second, then spawn cards moving from the deck to the second point
     }
 }

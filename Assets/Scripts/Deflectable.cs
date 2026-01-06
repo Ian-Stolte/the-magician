@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Bullet : MonoBehaviour
+public class Deflectable : MonoBehaviour
 {
     [Header("Movement")]
     public Vector3 direction;
@@ -12,6 +12,8 @@ public class Bullet : MonoBehaviour
     
     [Header("Properties")]
     public float damage;
+    private bool bubbled;
+    [SerializeField] private float bubbleDuration;
 
     [Header("References")]
     private PlayerController player;
@@ -26,15 +28,19 @@ public class Bullet : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (!gameManager.paused)
+        if (!gameManager.paused && !bubbled)
         {
             transform.position += direction*speed*0.02f;
             distTraveled += Vector3.Magnitude(direction)*speed*0.02f;
             if (distTraveled > maxDist)
-            {
                 Destroy(gameObject);
-            }
+        }
+    }
 
+    void Update()
+    {
+        if (!bubbled)
+        {
             Collider2D playerCol = Physics2D.OverlapCircle(transform.position, 0.5f, LayerMask.GetMask("Player"));
             if (playerCol != null)
             {
@@ -45,25 +51,27 @@ public class Bullet : MonoBehaviour
             Collider2D bubbleCol = Physics2D.OverlapCircle(transform.position, 0.5f, LayerMask.GetMask("Bubble"));
             if (bubbleCol != null)
             {
-                if (bubbleCol.CompareTag("Bubble"))
+                if (bubbleCol.CompareTag("Bubble") && !bubbleCol.transform.parent.name.Contains("Card"))
                 {
-                    BubbleCollision(bubbleCol.gameObject);
+                    Destroy(bubbleCol.gameObject);
+                    transform.GetChild(0).gameObject.SetActive(true);
+                    bubbled = true;
                 }
             }
-
-            Collider2D wallCol = Physics2D.OverlapCircle(transform.position, 0.5f, LayerMask.GetMask("Obstacle"));
-            if (wallCol != null)
+        }
+        else
+        {
+            bubbleDuration -= Time.deltaTime;
+            if (bubbleDuration <= 0)
             {
                 Destroy(gameObject);
             }
         }
-    }
 
-    virtual protected void BubbleCollision(GameObject bubble)
-    {
-        Destroy(bubble);
-        speed -= 3;
-        if (speed <= 0)
+        Collider2D wallCol = Physics2D.OverlapCircle(transform.position, 0.5f, LayerMask.GetMask("Obstacle"));
+        if (wallCol != null)
+        {
             Destroy(gameObject);
+        }
     }
 }

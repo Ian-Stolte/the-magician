@@ -9,6 +9,7 @@ TagManager:
   - Wall
   - Audio
   - Platform
+  - Deflectable
   layers:
   - Default
   - TransparentFX
