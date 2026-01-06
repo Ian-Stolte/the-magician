@@ -35,6 +35,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] TileGeneration tileGen;
     [SerializeField] GameObject joystick;
     [SerializeField] GameObject dashButton;
+    [SerializeField] RectTransform iconParent;
     private AudioManager audioManager;
     private PlatformSettings platform;
             
@@ -49,7 +50,10 @@ public class GameManager : MonoBehaviour
         dashButton.SetActive(platform.mobile);
 
         if (platform.mobile)
+        {
             Camera.main.orthographicSize = 5f;
+            iconParent.anchoredPosition = new Vector2(460, 90);
+        }
     }
 
     void Update()

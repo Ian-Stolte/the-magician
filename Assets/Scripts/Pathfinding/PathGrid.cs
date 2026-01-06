@@ -21,7 +21,7 @@ public class PathGrid : MonoBehaviour
         CreateGrid();
     }
 
-    void CreateGrid()
+    public void CreateGrid()
     {
         grid = new Node[gridSizeX, gridSizeY];
         Vector3 bottomLeft = transform.position - new Vector3(rawGridSize.x/2, rawGridSize.y/2, 0);
@@ -31,7 +31,7 @@ public class PathGrid : MonoBehaviour
             for (int y = 0; y < gridSizeY; y++)
             {
                 Vector3 pos = bottomLeft + new Vector3((2*x + 1)*nodeRadius, (2*y + 1)*nodeRadius, 0);
-                bool walkable = !Physics2D.OverlapCircle(pos, nodeRadius+walkableCheckRadius, unwalkable);
+                bool walkable = !Physics2D.OverlapCircle(pos, walkableCheckRadius, unwalkable);
                 grid[x, y] = new Node(walkable, pos, x, y);
             }
         }
@@ -60,6 +60,7 @@ public class PathGrid : MonoBehaviour
 
     public Node NodeFromWorldPoint(Vector3 pos)
     {
+        pos -= transform.position;
         float percentX = (pos.x + rawGridSize.x/2) / rawGridSize.x;
         float percentY = (pos.y + rawGridSize.y/2) / rawGridSize.y;
         percentX = Mathf.Clamp01(percentX);

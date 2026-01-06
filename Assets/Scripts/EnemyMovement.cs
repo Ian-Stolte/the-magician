@@ -79,7 +79,7 @@ public class EnemyMovement : MonoBehaviour
                 if (Vector3.Distance(player.position, moveTarget) > 0.5f)
                 {
                     moveTarget = player.position;
-                    StartCoroutine(pathfinding.FindPath(transform.position, player.position, false, OnPathFound, false));
+                    StartCoroutine(pathfinding.FindPath(transform.position, player.position, OnPathFound, false));
                     //RequestManager.RequestPath(transform.position, player.position, false, OnPathFound);
                 }
                 if (pathReady)

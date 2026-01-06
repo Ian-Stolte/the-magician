@@ -592,7 +592,7 @@ MonoBehaviour:
   lineOfSight: 0
   speed: 3
   turnSpeed: 20
-  followDist: 10
+  followDist: 12
   minDelay: 1
   maxDelay: 3.5
   attackDist: 5

@@ -10123,12 +10123,14 @@ MonoBehaviour:
   fader: {fileID: 774975899}
   gameOver: {fileID: 259596353}
   pauseMenu: {fileID: 536654168}
-  levelTxt: {fileID: 699654523}
   levelNum: 0
+  bossLevel: 0
+  levelTxt: {fileID: 699654523}
   upgrades: {fileID: 642230862}
   player: {fileID: 1699551966}
   enemies: {fileID: 817879012}
   lighting: {fileID: 1203609196}
+  pathGrid: {fileID: 1376518929}
 --- !u!156049354 &756249590
 Grid:
   m_ObjectHideFlags: 0
@@ -17633,10 +17635,10 @@ MonoBehaviour:
   unwalkable:
     serializedVersion: 2
     m_Bits: 64
-  rawGridSize: {x: 200, y: 200}
-  nodeRadius: 0.2
-  walkableCheckRadius: 0.2
-  drawGizmos: 0
+  rawGridSize: {x: 90, y: 90}
+  nodeRadius: 0.25
+  walkableCheckRadius: 0.8
+  drawGizmos: 1
 --- !u!4 &1376518930
 Transform:
   m_ObjectHideFlags: 0
@@ -17646,7 +17648,7 @@ Transform:
   m_GameObject: {fileID: 1376518926}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 30, y: 30, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -18754,7 +18756,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 450, y: 76}
+  m_AnchoredPosition: {x: 100, y: 90}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1685326058
@@ -19077,6 +19079,7 @@ MonoBehaviour:
   tileGen: {fileID: 756249589}
   joystick: {fileID: 263068038}
   dashButton: {fileID: 1505979641}
+  iconParent: {fileID: 1672185050}
 --- !u!114 &1699551971
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21188,9 +21191,9 @@ SceneRoots:
   - {fileID: 1634879215}
   - {fileID: 368361864}
   - {fileID: 565994566}
-  - {fileID: 1376518930}
   - {fileID: 1203609196}
   - {fileID: 1859923547}
+  - {fileID: 1376518930}
   - {fileID: 756249591}
   - {fileID: 1105622305}
   - {fileID: 1699551966}

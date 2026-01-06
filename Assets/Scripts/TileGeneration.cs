@@ -48,6 +48,8 @@ public class TileGeneration : MonoBehaviour
     [SerializeField] Transform enemies;
     [SerializeField] Transform lighting;
 
+    [Header("References")]
+    [SerializeField] PathGrid pathGrid;
 
 
     private void Awake()
@@ -243,6 +245,10 @@ public class TileGeneration : MonoBehaviour
         generating = false;
         foreach (Transform child in enemies)
             child.GetComponent<EnemyMovement>().mode = "MOVE";
+        
+        //Recalculate pathfinding
+        pathGrid.CreateGrid();
+        
         player.GetComponent<GameManager>().paused = false;
     }
 
