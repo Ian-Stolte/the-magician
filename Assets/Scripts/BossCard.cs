@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using System.Collections;
 
 public class BossCard : MonoBehaviour
@@ -28,6 +29,7 @@ public class BossCard : MonoBehaviour
     private bool firing;
 
     [Header("References")]
+    [SerializeField] CanvasGroup fader;
     private Transform player;
 
 
@@ -84,16 +86,33 @@ public class BossCard : MonoBehaviour
 
             //Check health
             health -= 1;
+            StartCoroutine(Camera.main.GetComponent<CameraShake>().Shake(0.05f, 0.8f));
             if (health <= 0)
             {
-                Destroy(gameObject);
-                foreach (GameObject enemy in GameObject.FindGameObjectsWithTag("Enemy"))
-                    Destroy(enemy);
-                Destroy(healthBar.transform.parent.gameObject);
+                player.GetComponent<PlayerController>().StartCoroutine(Death());
             }
             healthBar.fillAmount = health / (float)maxHealth;
             //TODO: taking damage vfx
         }
+    }
+
+    private IEnumerator Death()
+    {
+        foreach (GameObject enemy in GameObject.FindGameObjectsWithTag("Enemy"))
+            Destroy(enemy);
+        Destroy(healthBar.transform.parent.gameObject);
+        Time.timeScale = 1f;
+        Destroy(gameObject);
+        
+        yield return new WaitForSeconds(1f);
+        float fadeTimer = 0f;
+        while (fadeTimer < 1)
+        {
+            fadeTimer += Time.deltaTime;
+            yield return null;
+            fader.alpha = fadeTimer;
+        }
+        SceneManager.LoadScene("Combat Scene"); 
     }
 
     private IEnumerator SpawnEnemies(int n)

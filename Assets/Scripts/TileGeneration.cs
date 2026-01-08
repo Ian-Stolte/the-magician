@@ -38,6 +38,7 @@ public class TileGeneration : MonoBehaviour
     
     [Header("Progression")]
     public int levelNum;
+    [SerializeField] int bossLevelNum;
     [SerializeField] bool bossLevel;
     [SerializeField] TextMeshProUGUI levelTxt;
     [SerializeField] UpgradeManager upgrades;
@@ -233,6 +234,11 @@ public class TileGeneration : MonoBehaviour
         levelNum++;
         levelTxt.text = "Level:  " + levelNum;
         yield return upgrades.NextRoom(levelNum);
+        if (levelNum == bossLevelNum)
+        {
+            bossLevel = true;
+            SceneManager.LoadScene("Boss 1");
+        }
 
         float fadeOut = 1f;
         while(fadeOut > 0)

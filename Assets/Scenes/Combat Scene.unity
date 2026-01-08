@@ -10124,6 +10124,7 @@ MonoBehaviour:
   gameOver: {fileID: 259596353}
   pauseMenu: {fileID: 536654168}
   levelNum: 0
+  bossLevelNum: 6
   bossLevel: 0
   levelTxt: {fileID: 699654523}
   upgrades: {fileID: 642230862}
