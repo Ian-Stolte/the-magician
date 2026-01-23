@@ -58,7 +58,7 @@ public class PlatformSettings : MonoBehaviour
         }
     }
 
-    private bool IsMobileBrowser() //this is not accurate
+    private bool IsMobileBrowser() //this is not accurate!
     {
         //float minDimension = Mathf.Min(Screen.width, Screen.height);
         //return minDimension <= 768 && Input.touchSupported;

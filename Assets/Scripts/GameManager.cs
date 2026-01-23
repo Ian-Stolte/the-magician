@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections;
 using TMPro;
 
@@ -53,6 +54,13 @@ public class GameManager : MonoBehaviour
         {
             Camera.main.orthographicSize = 5f;
             iconParent.anchoredPosition = new Vector2(460, 90);
+        }
+
+        //show correct tutorial text
+        if (SceneManager.GetActiveScene().name == "Tutorial")
+        {
+            GameObject.Find("Tutorial Text_mobile").SetActive(platform.mobile);
+            GameObject.Find("Tutorial Text_desktop").SetActive(!platform.mobile);
         }
     }
 
