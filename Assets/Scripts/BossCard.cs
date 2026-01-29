@@ -118,6 +118,7 @@ public class BossCard : MonoBehaviour
     private IEnumerator SpawnEnemies(int n)
     {
         //show dialogue?
+        DialogueManager.Instance.PlayByID("Boss 1", "Volunteers", Random.Range(1, 3), 2);
 
         Time.timeScale = 0.4f;
         for (int i = 0; i < n; i++)
@@ -134,6 +135,7 @@ public class BossCard : MonoBehaviour
 
     private IEnumerator PickExplosionPoints(int n)
     {
+        //DialogueManager.Instance.PlayByID("Boss 1", "Card Explode", Random.Range(1, 3), 2);
         for (int i = 0; i < n; i++)
         {
             Vector3 targetPos = Vector3.zero;
@@ -167,6 +169,7 @@ public class BossCard : MonoBehaviour
 
     private IEnumerator FireCards(int n)
     {
+        DialogueManager.Instance.PlayByID("Boss 1", "Card Throw", Random.Range(1, 3), 2);
         firing = true;
         //rapidly shoot cards toward the player-- if bubbled, they can be fired back
         for (int i = 0; i < n; i++)

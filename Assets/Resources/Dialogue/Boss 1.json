@@ -1,0 +1,34 @@
+{
+  "Fight Start": {
+    "0": 1,
+    "1": "some dialogue",
+    "2": "some more dialogue!",
+    "3": "",
+    "4": 2,
+    "5": "can optionally have a 2nd variation!"
+  },
+  "Card Explode": {
+    "0": 1,
+    "1": "Pick a card, ANY CARD!",
+    "2": "",
+    "3": 2,
+    "4": "Was this your card? How about this one? THIS ONE!?",
+    "5": ""
+  },
+  "Volunteers": {
+    "0": 1,
+    "1": "I'm going to need some VOLUNTEERS!",
+    "2": "",
+    "3": 2,
+    "4": "Come on up to the stage, everyone!",
+    "5": ""
+  },
+  "Card Throw": {
+    "0": 1,
+    "1": "Here, hold on to these for me!",
+    "2": "",
+    "3": 2,
+    "4": "High velocity card magic!",
+    "5": ""
+  }
+}
